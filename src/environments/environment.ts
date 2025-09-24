@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'http://172.16.1.130:1818/', // Адрес API для разработки
+    apiUrl: 'http://5.129.246.42:1818/', // Адрес API для разработки
 };

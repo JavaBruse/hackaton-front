@@ -5,8 +5,6 @@ import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import { LoadingComponent } from './loading/loading.component';
 import { LoginService } from './services/login.service';
 import { ErrorMessageComponent } from './error-message/error-message.component';
-import { FilterService } from './filter/services/filter.service';
-import { SourceService } from './source-flow/services/sources.service';
 import { CheckToken } from './services/checkToken.service';
 
 @Component({
@@ -28,8 +26,6 @@ export class AppComponent {
   router = inject(Router);
   loginService = inject(LoginService);
   styleSwither = inject(StyleSwitcherService);
-  filterService = inject(FilterService);
-  sourceService = inject(SourceService);
   checkTokenService = inject(CheckToken);
 
   constructor() {
@@ -59,8 +55,7 @@ export class AppComponent {
   logout() {
     localStorage.removeItem('Authorization');
     this.loginService.setIsLoginSignal(false);
-    this.filterService.clear();
-    this.sourceService.clear();
+
     this.closeMenu();
   }
 
