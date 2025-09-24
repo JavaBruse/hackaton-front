@@ -30,7 +30,7 @@
       <span class="label">Главная</span>
     </a>
 
-    <a class="item" routerLink="/3" routerLinkActive="active" (click)="closeMenu()">
+    <a class="item" routerLink="/FAQ" routerLinkActive="active" (click)="closeMenu()">
       <mat-icon>help_outline</mat-icon>
       <span class="label">FAQ</span>
     </a>
@@ -41,7 +41,7 @@
       <mat-icon>home</mat-icon>
       <span class="label">Главная</span>
     </a>
-    <a class="item" routerLink="/3" routerLinkActive="active" (click)="closeMenu()">
+    <a class="item" routerLink="/FAQ" routerLinkActive="active" (click)="closeMenu()">
       <mat-icon>help_outline</mat-icon>
       <span class="label">FAQ</span>
     </a>
@@ -49,20 +49,6 @@
   </div>
 
   <div class="sidebar-bottom">
-    @if (isRouteActive('/filters')) {
-    <!-- <div class="divider"></div>
-    <a class="item" (click)="filterService.setVisibleAdd(true); closeMenu()">
-      <mat-icon>add</mat-icon>
-      <span class="label">Новый фильтр</span>
-    </a>
-    } @else if (isRouteActive('/sources')) {
-    <div class="divider"></div>
-    <a class="item" (click)="sourceService.setVisibleAdd(true); closeMenu()">
-      <mat-icon>add</mat-icon>
-      <span class="label">Новый источник</span>
-    </a> -->
-    }
-
     <div class="divider"></div>
     <a class="item" role="button" (click)="onThemeSwitchChange()">
       <mat-icon>{{ isLightTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>
@@ -70,11 +56,6 @@
     </a>
 
     @if (loginService.isLoginSignal()) {
-    <!-- <a class="item" routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">
-      <mat-icon>person</mat-icon>
-      <span class="label">Профиль</span>
-    </a> -->
-
     <a class="item" routerLink="/login" (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span class="label">Выход</span>

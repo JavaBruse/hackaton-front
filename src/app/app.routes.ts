@@ -6,10 +6,12 @@ import { RegistrationComponent } from './registration/registration.component';
 import { RootComponent } from './services/root.service';
 import { HomeComponent } from './home/home.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { FaqComponent } from './faq/faq.component';
 
 export const routes: Routes = [
     // { path: '', redirectTo: 'login', canActivate: [AuthGuard] },
     { path: '', component: RootComponent, pathMatch: 'full' },
+    { path: 'FAQ', component: FaqComponent },
     { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
     { path: 'registration', component: RegistrationComponent, canActivate: [LoginGuard] },
     { path: 'welome', component: WelcomeComponent, canActivate: [LoginGuard] },
