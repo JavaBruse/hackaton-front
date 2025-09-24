@@ -1,0 +1,120 @@
+<div class="filters-container">
+    <div class="header-container">
+        <!-- поиск -->
+        @if (!styleSwithService.isMobileViewSignal()) {
+        <div class="search-menu-button">
+            <mat-button-toggle-group [formControl]="selectedControl" aria-label="Filter type">
+                <mat-button-toggle value="all"><mat-icon>apps</mat-icon></mat-button-toggle>
+                <mat-button-toggle value="folow"><mat-icon>star</mat-icon></mat-button-toggle>
+                <mat-button-toggle value="only-my"><mat-icon>person</mat-icon></mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+        }
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Поиск</mat-label>
+            <input matInput [formControl]="searchControl">
+            @if (searchControl.value) {
+            <mat-icon matSuffix (click)="clearFilter()">close</mat-icon>
+            }
+        </mat-form-field>
+        @if (styleSwithService.isMobileViewSignal()) {
+        <div class="search-menu-button">
+            <mat-icon matSuffix [matMenuTriggerFor]="searchMenu">{{ getCurrentFilterIcon() }}</mat-icon>
+        </div>
+        }
+        <mat-menu #searchMenu="matMenu" class="compact-menu">
+            @if (selectedSignal() !== 'all') {
+            <button mat-menu-item (click)="selectedControl.setValue('all')">
+                <mat-icon class="icon-menu">apps</mat-icon>
+            </button>
+            }
+            @if (selectedSignal() !== 'folow') {
+            <button mat-menu-item (click)="selectedControl.setValue('folow')">
+                <mat-icon class="icon-menu">star</mat-icon>
+            </button>
+            }
+            @if (selectedSignal() !== 'only-my') {
+            <button mat-menu-item (click)="selectedControl.setValue('only-my')">
+                <mat-icon class="icon-menu">person</mat-icon>
+            </button>
+            }
+        </mat-menu>
+        <!-- поиск -->
+    </div>
+
+    <div class="cards-grid">
+        @if (filterService.visibleAdd()) {
+        <mat-card tabindex="0" class="card-style">
+            <app-filter-add></app-filter-add>
+        </mat-card>
+        }
+        @for (filter of filteredValues(); track filter.id) {
+        @if (editFilterId === filter.id) {
+        <mat-card tabindex="0" class="card-style">
+            <app-filter-edit [filter]="filter" (saved)="finishEdit()" (cancelled)="finishEdit()"></app-filter-edit>
+        </mat-card>
+        } @else {
+        <mat-card tabindex="0" class="card-style">
+            <div class="card-layout">
+                <div class="card-side">
+                    @if (filter.isMy) {
+                    @if (!filter.isPrivate) {
+                    <div matBadge="{{filter.rating}}">
+                        <mat-icon>{{ getPrivatStatusIcon(filter.isPrivate) }}</mat-icon>
+                    </div>
+                    } @else {
+                    <mat-icon>{{ getPrivatStatusIcon(filter.isPrivate) }}</mat-icon>
+                    }
+                    }
+                </div>
+                <div class="card-main">
+                    <mat-card-header>
+                        <mat-card-title class="filter-name">{{ filter.name }}</mat-card-title>
+                        <mat-card-subtitle class="filter-rating">{{ filter.id }}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        @if (filter.words.length) {
+                        <div class="keywords-section">
+                            <h4>Ключевые слова:</h4>
+                            <div class="keywords-container">
+                                @for (word of filter.words; track word) {
+                                <span class="keyword-chip">{{ word }}</span>
+                                }
+                            </div>
+                        </div>
+                        }
+                    </mat-card-content>
+                </div>
+                <div class="card-side">
+                    @if (!filter.isMy) {
+                    <label title="Star" class="star" matBadge="{{filter.rating}}">
+                        <input class="checkbox" type="checkbox" [checked]="filter.isFollow"
+                            (change)="onFollow(filter.id)" />
+                        <div class="svg-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-outline" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.5L9.45 8.5L3 9.06L7.725 13.39L6.25 19.82L12 16.5L17.75 19.82L16.275 13.39L21 9.06L14.55 8.5L12 2.5ZM12 4.75L14 9.33L18.7 9.75L15 13.07L16.18 17.75L12 15.16L7.82 17.75L9 13.07L5.3 9.75L10 9.33L12 4.75Z">
+                                </path>
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="svg-filled" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.5L9.45 8.5L3 9.06L7.725 13.39L6.25 19.82L12 16.5L17.75 19.82L16.275 13.39L21 9.06L14.55 8.5L12 2.5Z">
+                                </path>
+                            </svg>
+                        </div>
+                    </label>
+                    } @else {
+                    <div class="button-size">
+                        <mat-icon (click)="startEdit(filter)" matTooltip="Редактировать">edit</mat-icon>
+                    </div>
+                    <div class="button-size">
+                        <mat-icon (click)="delete(filter.id)" matTooltip="Удалить">delete_outline</mat-icon>
+                    </div>
+                    }
+                </div>
+            </div>
+        </mat-card>
+        }
+        }
+    </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="card-layout" [formGroup]="form">
+    <div class="card-main card-component-padding">
+        <mat-card-header>
+            <mat-form-field appearance="outline">
+                <mat-label>Тип потока</mat-label>
+                <mat-select formControlName="type">
+                    <mat-option value="VKONTAKTE">ВКонтакте</mat-option>
+                    <mat-option value="TELEGRAM">Telegram</mat-option>
+                    <mat-option value="HTTP">HTTP</mat-option>
+                </mat-select>
+            </mat-form-field>
+            @if(isVkontakteSelected){
+            <mat-form-field appearance="outline"><mat-label>Имя группы VK</mat-label>
+                <input matInput formControlName="vkontakteField" (blur)="findGroupVK()">
+            </mat-form-field>
+            } @if(isTelegramSelected){
+            <mat-form-field appearance="outline"><mat-label>ID Telegram</mat-label>
+                <input matInput formControlName="telegramField">
+            </mat-form-field>
+            } @if (isHTTPSelected){
+            <mat-form-field appearance="outline"><mat-label>HTTP URL</mat-label>
+                <input matInput formControlName="httpURL">
+            </mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>HEADERS</mat-label>
+                <textarea matInput formControlName="headers"></textarea>
+            </mat-form-field>
+            }
+        </mat-card-header>
+        @if(isVkontakteSelected || isTelegramSelected || isHTTPSelected){
+        <mat-form-field appearance="outline">
+            <mat-label>Название</mat-label>
+            <input matInput formControlName="name" [readonly]="isVkontakteSelected">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Описание</mat-label>
+            <textarea matInput formControlName="description" [readonly]="isVkontakteSelected"></textarea>
+        </mat-form-field>
+        }
+        <mat-checkbox formControlName="isPrivate">PRIVATE</mat-checkbox>
+    </div>
+    <!-- Кнопки -->
+    <div class="card-side">
+        <a class="button-size" (click)="cancel()" matTooltip="Отмена">
+            <mat-icon>cancel</mat-icon>
+        </a>
+        <a class="button-size" (click)="save()" matTooltip=" Сохранить">
+            <mat-icon>save</mat-icon>
+        </a>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+.error-message {
+    padding: 10px;
+    background-color: #ff1100;
+    color: #ffffff;
+    border-radius: 5px;
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    font-size: 12px;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+
+.error-message.leave {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .error-message {
+        top: 94%;
+
+    }
+}

@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: front
+    image: front
+    networks:
+      app_network:
+        ipv4_address: 172.20.0.10 # Статический IP для контейнера
+    restart: unless-stopped
+    expose:
+      - "3000" # Только внутри сети Docker
+    # ports:
+    #   - "3000:3000" # Прокси порта 80 с хоста на порт 3000 в контейнере
+networks:
+  app_network:
+    external: true # Указываем, что сеть внешняя, но она должна быть заранее создана

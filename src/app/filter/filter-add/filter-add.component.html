@@ -1,0 +1,38 @@
+<div class="card-layout" [formGroup]="form">
+    <div class="card-main card-component-padding">
+        <!-- Название -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Название</mat-label>
+            <input matInput formControlName="name" maxlength="20" placeholder="Введите название">
+            <mat-hint align="end">{{ form.get('name')?.value?.length || 0 }} / 20</mat-hint>
+        </mat-form-field>
+
+        <!-- Ключевые слова -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Ключевые слова</mat-label>
+            <mat-chip-grid #chipGrid>
+                @for (word of wordsArray.controls; track word; let i = $index) {
+                <mat-chip-row (removed)="removeWord(i)">
+                    {{ word.value }}
+                    <button matChipRemove [attr.aria-label]="'remove ' + word.value">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+                }
+            </mat-chip-grid>
+            <input placeholder="Добавить слово" #wordInput (keyup.enter)="addWord(wordInput.value); wordInput.value='';"
+                [matChipInputFor]="chipGrid" />
+        </mat-form-field>
+        <mat-checkbox formControlName="isPrivate">PRIVATE</mat-checkbox>
+    </div>
+
+    <!-- Кнопки -->
+    <div class="card-side">
+        <a class="button-size" (click)="cancel()" matTooltip="Отмена">
+            <mat-icon>cancel</mat-icon>
+        </a>
+        <a class="button-size" (click)="save()" matTooltip="Сохранить">
+            <mat-icon>save</mat-icon>
+        </a>
+    </div>
+</div>
