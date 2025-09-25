@@ -10,11 +10,10 @@ import { MatSelectModule } from '@angular/material/select';
   imports: [MatFormFieldModule, MatSelectModule],
   styleUrls: ['./api-docs.component.css']
 })
-export class ApiDocsComponent implements OnInit, AfterViewInit {
+export class ApiDocsComponent implements OnInit {
   services: ApiServiceInfo[] = [];
 
   constructor(public apiDocsService: ApiDocsService) {
-    // Реактивный эффект внутри контекста инжекции
     effect(() => {
       const service = this.apiDocsService.selectedService();
       if (!service) return;
@@ -28,10 +27,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     if (this.services.length > 0 && !this.apiDocsService.selectedService()) {
       this.apiDocsService.selectService(this.services[0]);
     }
-  }
-
-  ngAfterViewInit(): void {
-    // Ничего не делаем, рендер через effect
   }
 
   renderSwagger(service: ApiServiceInfo) {
