@@ -1,8 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { ApiDocsService } from './api-docs.service';
-import SwaggerUI from 'swagger-ui-dist/swagger-ui-bundle.js';
-import 'swagger-ui-dist/swagger-ui.css';
 
+declare const SwaggerUI: any;
 
 @Component({
   selector: 'app-api-docs',
