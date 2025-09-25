@@ -4,6 +4,12 @@ sudo apt-get install -y nodejs
 sudo npm install -g @angular/cli
 ```
 
+устанавливаем свагер
+
+```shell
+npm install swagger-ui-dist
+```
+
 Коммит
 
 ```shell

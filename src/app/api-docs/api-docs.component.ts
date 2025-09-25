@@ -17,7 +17,7 @@ export class ApiDocsComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     SwaggerUI({
       dom_id: '#swagger-ui',
-      url: 'http://localhost:1818/security/v3/api-docs'
+      url: 'http://5.129.246.42:1818/security/v3/api-docs'
     });
   }
 }
