@@ -14,9 +14,13 @@ declare const SwaggerUI: any;
 })
 export class ApiDocsComponent implements AfterViewInit {
   ngAfterViewInit(): void {
-    SwaggerUI({
+    const SwaggerUIBundle = (window as any).SwaggerUIBundle;
+    const SwaggerUIStandalonePreset = (window as any).SwaggerUIStandalonePreset;
+
+    SwaggerUIBundle({
       dom_id: '#swagger-ui',
-      url: 'http://5.129.246.42:1818/security/v3/api-docs'
+      url: 'http://5.129.246.42:1818/security/v3/api-docs',
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset]
     });
   }
 }
