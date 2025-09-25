@@ -1,25 +1,49 @@
-import { Component, AfterViewInit } from '@angular/core';
-import { ApiDocsService } from './api-docs.service';
-
-declare const SwaggerUI: any;
+import { Component, AfterViewInit, OnInit, effect } from '@angular/core';
+import { ApiDocsService, ApiServiceInfo } from './api-docs.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-api-docs',
-  template: `<div id="swagger-ui"></div>`,
-  styles: [`
-    #swagger-ui {
-      margin: 20px;
-    }
-  `]
+  templateUrl: './api-docs.component.html',
+  standalone: true,
+  imports: [MatFormFieldModule, MatSelectModule],
+  styleUrls: ['./api-docs.component.css']
 })
-export class ApiDocsComponent implements AfterViewInit {
+export class ApiDocsComponent implements OnInit, AfterViewInit {
+  services: ApiServiceInfo[] = [];
+
+  constructor(public apiDocsService: ApiDocsService) {
+    // Реактивный эффект внутри контекста инжекции
+    effect(() => {
+      const service = this.apiDocsService.selectedService();
+      if (!service) return;
+      this.renderSwagger(service);
+    });
+  }
+
+  ngOnInit(): void {
+    this.services = this.apiDocsService.getServices();
+
+    if (this.services.length > 0 && !this.apiDocsService.selectedService()) {
+      this.apiDocsService.selectService(this.services[0]);
+    }
+  }
+
   ngAfterViewInit(): void {
+    // Ничего не делаем, рендер через effect
+  }
+
+  renderSwagger(service: ApiServiceInfo) {
     const SwaggerUIBundle = (window as any).SwaggerUIBundle;
     const SwaggerUIStandalonePreset = (window as any).SwaggerUIStandalonePreset;
 
+    const container = document.getElementById('swagger-ui');
+    if (container) container.innerHTML = '';
+
     SwaggerUIBundle({
       dom_id: '#swagger-ui',
-      url: 'http://5.129.246.42:1818/security/v3/api-docs',
+      url: service.url,
       presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset]
     });
   }

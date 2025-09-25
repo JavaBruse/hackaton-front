@@ -1,7 +1,12 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpService } from '../services/http.service';
 import { Observable } from 'rxjs';
+
+export interface ApiServiceInfo {
+    name: string;
+    url: string;
+}
 
 @Injectable({
     providedIn: 'root'
@@ -9,10 +14,27 @@ import { Observable } from 'rxjs';
 export class ApiDocsService {
 
     private http = inject(HttpService);
-    private url = environment.apiUrl;
-    private apiUrl = this.url + 'security/v3/api-docs';
 
-    getApiDocs() {
-        return this.http.get(this.apiUrl);
+    selectedService = signal<ApiServiceInfo | null>(null);
+
+    // Массив доступных сервисов (можно расширять)
+    services: ApiServiceInfo[] = [
+        { name: 'Security', url: environment.apiUrl + 'security/v3/api-docs' },
+        { name: 'Orders', url: environment.apiUrl + 'orders/v3/api-docs' }
+    ];
+
+    // Метод для получения списка сервисов
+    getServices(): ApiServiceInfo[] {
+        return this.services;
+    }
+
+    // Метод для выбора сервиса
+    selectService(service: ApiServiceInfo) {
+        this.selectedService.set(service);
+    }
+
+    // Если нужно, можно запросить спецификацию напрямую через Http
+    fetchApiDocs(service: ApiServiceInfo): Observable<any> {
+        return this.http.get(service.url);
     }
 }
