@@ -1,0 +1,49 @@
+<section>
+    <!-- зона drag&drop -->
+    <div class="drop-zone" (dragover)="allowDrop($event)" (dragleave)="onDragLeave()" (drop)="onFileDropped($event)"
+        [class.drag-over]="dragOver">
+        <p>Перетащите файлы сюда или выберите вручную</p>
+        <input type="file" (change)="onFileSelected($event)" multiple accept="image/*,.zip" style="display: none;"
+            #fileInput>
+        <button type="button" (click)="fileInput.click()">Выбрать файлы</button>
+    </div>
+    <!-- список файлов -->
+    @if (files.length > 0) {
+    <h3>Файлы:</h3>
+    <ul>
+        @for (f of files; track f.file.name; let i = $index) {
+        <li class="file-item">
+            @if (f.isImage) {
+            <div class="file-row">
+                <img [src]="f.preview" alt="preview" class="thumb" />
+                <span class="file-info">
+                    <strong>{{ f.file.name }}</strong>
+                    <div class="size">{{ formatSize(f.file.size) }}</div>
+                </span>
+                <button (click)="showPreview(f)">Просмотр</button>
+                <button (click)="removeFile(i)">Удалить</button>
+            </div>
+            } @else {
+            <div class="file-row">
+                <span class="file-info">📦 <strong>{{ f.file.name }}</strong>
+                    <div class="size">{{ formatSize(f.file.size) }}</div>
+                </span>
+                <button (click)="removeFile(i)">Удалить</button>
+            </div>
+            }
+        </li>
+        }
+    </ul>
+    }
+
+    @if (files.length > 0) {
+    <button (click)="onUpload()" [disabled]="uploading">Отправить</button>
+    }
+
+    <!-- overlay предпросмотр -->
+    @if (previewImage) {
+    <div class="overlay" (click)="closePreview()">
+        <img [src]="previewImage" class="preview-image" />
+    </div>
+    }
+</section>
