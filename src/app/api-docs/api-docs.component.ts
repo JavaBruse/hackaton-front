@@ -24,9 +24,9 @@ export class ApiDocsComponent implements OnInit {
   ngOnInit(): void {
     this.services = this.apiDocsService.getServices();
 
-    if (this.services.length > 0 && !this.apiDocsService.selectedService()) {
-      this.apiDocsService.selectService(this.services[1]);
-    }
+    // if (this.services.length > 0 && !this.apiDocsService.selectedService()) {
+    //   this.apiDocsService.selectService(this.services[1]);
+    // }
   }
 
   renderSwagger(service: ApiServiceInfo) {
