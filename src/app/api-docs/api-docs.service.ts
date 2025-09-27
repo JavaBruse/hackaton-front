@@ -19,7 +19,7 @@ export class ApiDocsService {
 
     // Массив доступных сервисов (можно расширять)
     services: ApiServiceInfo[] = [
-        { name: 'Security', url: environment.apiUrl + 'security/v3/api-docs' }
+        { name: 'Security', url: environment.apiUrl + 'security/v3/api-docs' },
         { name: 'Main', url: environment.apiUrl + 'main/v3/api-docs' }
     ];
 
