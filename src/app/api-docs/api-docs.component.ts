@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, effect } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { ApiDocsService, ApiServiceInfo } from './api-docs.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
