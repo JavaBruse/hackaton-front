@@ -1,44 +1,71 @@
+// src/app/upload/upload.service.ts
 import { Injectable, inject } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { HttpService } from '../services/http.service';
 import { Observable } from 'rxjs';
+import { HttpService } from '../services/http.service';
+import { environment } from '../../environments/environment';
 
 export interface PhotoRequest {
-    id?: string;
     name: string;
-    contentType: string;
-    fileSize: number;
-    taskId?: string;
+    contentType?: string;
+    fileSize?: number;
+    id?: string;
     filePath?: string;
 }
 
 export interface PresignedUploadResponse {
-    photoId: string;
     uploadUrl: string;
     objectKey: string;
-    expiresAt: number;
 }
 
-@Injectable({
-    providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class UploadService {
     private http = inject(HttpService);
-    private url = environment.apiUrl;
-    private apiUrl = this.url + 'main/v1/photo/upload';
+    private apiUrl = environment.apiUrl + 'main/v1/photo/upload';
 
-    // Получить Presigned URL от бэкенда
     initiateUpload(photoRequest: PhotoRequest): Observable<PresignedUploadResponse> {
         return this.http.post<PresignedUploadResponse>(this.apiUrl, photoRequest);
     }
 
-    // Загрузить файл напрямую в S3 (используем нативный fetch)
-    uploadToS3(presignedUrl: string, file: File): Promise<Response> {
-        return fetch(presignedUrl, {
-            method: 'PUT',
-            body: file,
-            headers: {
-                'Content-Type': file.type
+    // Загрузка с прогрессом через XHR. Не устанавливаем Content-Type по умолчанию
+    // (можно раскомментировать setRequestHeader, если presign ожидает header).
+    uploadToS3WithProgress(
+        presignedUrl: string,
+        file: File,
+        onProgress: (percent: number) => void
+    ): Promise<void> {
+        return new Promise((resolve, reject) => {
+            try {
+                const xhr = new XMLHttpRequest();
+
+                // Твоя прокси-замена (как в коде)
+                const proxiedUrl = presignedUrl.replace('https://s3.twcstorage.ru', '/s3-upload');
+
+                xhr.open('PUT', proxiedUrl, true);
+
+                xhr.upload.onprogress = (ev) => {
+                    if (ev.lengthComputable) {
+                        const p = Math.round((ev.loaded / ev.total) * 100);
+                        onProgress(p);
+                    }
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        onProgress(100);
+                        resolve();
+                    } else {
+                        // отдаём текст ответа для дебага
+                        reject(new Error(`Upload failed ${xhr.status} ${xhr.statusText} ${xhr.responseText}`));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error('Network error during upload'));
+                // Если presign был с учётом Content-Type — можно указать:
+                // xhr.setRequestHeader('Content-Type', file.type);
+
+                xhr.send(file);
+            } catch (err) {
+                reject(err);
             }
         });
     }

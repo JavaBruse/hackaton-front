@@ -31,6 +31,19 @@
                 <button (click)="removeFile(i)">Удалить</button>
             </div>
             }
+
+            <!-- прогресс под файлом -->
+            <div class="progress-row">
+                <div class="progress-bar">
+                    <div class="progress" [style.width.%]="f.progress"></div>
+                </div>
+                <div class="percent">{{ f.progress }}%</div>
+            </div>
+
+            <!-- ошибка если есть -->
+            @if (f.error) {
+            <div class="upload-error">Ошибка: {{ f.error }}</div>
+            }
         </li>
         }
     </ul>
@@ -44,6 +57,15 @@
     @if (previewImage) {
     <div class="overlay" (click)="closePreview()">
         <img [src]="previewImage" class="preview-image" />
+    </div>
+    }
+
+    <!-- затемнение прогресса загрузки (без крутящегося круга) -->
+    @if (uploading) {
+    <div class="overlay">
+        <div class="progress-counter">
+            {{ uploadedCount }} / {{ files.length }}
+        </div>
     </div>
     }
 </section>

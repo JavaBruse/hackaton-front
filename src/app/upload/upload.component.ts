@@ -1,14 +1,19 @@
-import { Component, inject, signal } from '@angular/core';
+// src/app/upload/upload.component.ts
+import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { firstValueFrom } from 'rxjs';
 import { HttpService } from '../services/http.service';
 import { ErrorMessageService } from '../services/error-message.service';
 import { environment } from '../../environments/environment';
-import { UploadService, PhotoRequest, PresignedUploadResponse } from './upload.service';
+import { UploadService, PhotoRequest } from './upload.service';
 
 interface UploadFile {
   file: File;
   preview?: string;
   isImage: boolean;
+  progress: number;    // 0..100 (инициализирован)
+  uploaded: boolean;   // true если успешно
+  error?: string | null;
 }
 
 @Component({
@@ -28,10 +33,19 @@ export class UploadComponent {
   dragOver = false;
   previewImage: string | null = null;
 
+  // счётчик завершённых (успешных) загрузок
+  private _uploadedCount = 0;
+  get uploadedCount(): number { return this._uploadedCount; }
+
+  // Параллелизм (можешь менять)
+  concurrency = 4;
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
     this.addFiles(input.files);
+    // сбрасываем input для повторного выбора того же файла (опционально)
+    input.value = '';
   }
 
   onFileDropped(event: DragEvent): void {
@@ -44,7 +58,13 @@ export class UploadComponent {
   addFiles(fileList: FileList): void {
     Array.from(fileList).forEach(file => {
       const isImage = file.type.startsWith('image/');
-      const uploadFile: UploadFile = { file, isImage };
+      const uploadFile: UploadFile = {
+        file,
+        isImage,
+        progress: 0,
+        uploaded: false,
+        error: null
+      };
 
       if (isImage) {
         const reader = new FileReader();
@@ -61,9 +81,7 @@ export class UploadComponent {
     this.dragOver = true;
   }
 
-  onDragLeave(): void {
-    this.dragOver = false;
-  }
+  onDragLeave(): void { this.dragOver = false; }
 
   formatSize(size: number): string {
     if (size < 1024) return size + ' Б';
@@ -72,66 +90,81 @@ export class UploadComponent {
   }
 
   removeFile(index: number): void {
+    // не даём удалять файл, если идёт загрузка (по желанию можно разрешить)
+    if (this.uploading) return;
     this.files.splice(index, 1);
   }
 
   showPreview(file: UploadFile): void {
-    if (file.isImage && file.preview) {
-      this.previewImage = file.preview;
-    }
+    if (file.isImage && file.preview) this.previewImage = file.preview;
   }
 
-  closePreview(): void {
-    this.previewImage = null;
-  }
+  closePreview(): void { this.previewImage = null; }
 
-  // НОВЫЙ МЕТОД ЗАГРУЗКИ
+  // === главная логика: параллельная загрузка с лимитом concurrency ===
   async onUpload(): Promise<void> {
     if (this.files.length === 0) return;
-
     this.uploading = true;
+    this._uploadedCount = 0;
 
     try {
-      // Загружаем файлы последовательно
-      for (const uploadFile of this.files) {
-        try {
-          // 1. Получаем Presigned URL от бэкенда
-          const photoRequest: PhotoRequest = {
-            name: uploadFile.file.name,
-            contentType: uploadFile.file.type,
-            fileSize: uploadFile.file.size
-          };
-
-          const response = await this.uploadService.initiateUpload(photoRequest).toPromise();
-
-          if (!response) {
-            throw new Error('Не удалось получить URL для загрузки');
-          }
-
-          // 2. Загружаем файл напрямую в S3
-          const s3Response = await this.uploadService.uploadToS3(response.uploadUrl, uploadFile.file);
-
-          if (s3Response.ok) {
-            console.log('Файл успешно загружен:', uploadFile.file.name);
-            console.log('Постоянный URL:', response.objectKey);
-          } else {
-            throw new Error(`Ошибка загрузки в S3: ${s3Response.status}`);
-          }
-
-        } catch (error) {
-          console.error(`Ошибка загрузки файла ${uploadFile.file.name}:`, error);
-        }
-      }
-
-      console.error('Загрузка завершена');
-      this.files = []; // Очищаем список после загрузки
-
-    } catch (error) {
-      console.error('Общая ошибка загрузки:', error);
-      console.error('Ошибка при загрузке файлов');
+      await this.uploadAllWithConcurrency(this.concurrency);
+      console.log('All uploads finished');
+    } catch (err) {
+      console.error('Error during uploads', err);
     } finally {
+      // очищаем список только от успешно загруженных
+      this.files = this.files.filter(f => !f.uploaded);
       this.uploading = false;
     }
   }
 
+  private async uploadAllWithConcurrency(concurrency: number): Promise<void> {
+    let idx = 0;
+    const total = this.files.length;
+
+    const worker = async () => {
+      while (true) {
+        const i = idx++;
+        if (i >= total) break;
+        const file = this.files[i];
+        await this.uploadSingle(file).catch(e => {
+          // уже обработано внутри uploadSingle — просто лог
+          console.error('uploadSingle error', e);
+        });
+      }
+    };
+
+    const workers: Promise<void>[] = [];
+    const parallel = Math.min(concurrency, total);
+    for (let w = 0; w < parallel; w++) workers.push(worker());
+    await Promise.all(workers);
+  }
+
+  private async uploadSingle(uploadFile: UploadFile): Promise<void> {
+    try {
+      // 1) запрос presigned
+      const photoRequest: PhotoRequest = {
+        name: uploadFile.file.name,
+        contentType: uploadFile.file.type,
+        fileSize: uploadFile.file.size
+      };
+
+      const response = await firstValueFrom(this.uploadService.initiateUpload(photoRequest));
+
+      // 2) загрузка через XHR с прогрессом
+      await this.uploadService.uploadToS3WithProgress(response.uploadUrl, uploadFile.file, (percent) => {
+        uploadFile.progress = percent;
+      });
+
+      uploadFile.uploaded = true;
+      uploadFile.error = null;
+      this._uploadedCount++;
+    } catch (err: any) {
+      uploadFile.error = err?.message || String(err);
+      uploadFile.progress = 0;
+      uploadFile.uploaded = false;
+      console.error(`Error uploading ${uploadFile.file.name}:`, err);
+    }
+  }
 }
