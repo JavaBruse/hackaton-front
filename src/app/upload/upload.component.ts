@@ -3,6 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { HttpService } from '../services/http.service';
 import { ErrorMessageService } from '../services/error-message.service';
 import { environment } from '../../environments/environment';
+import { UploadService, PhotoRequest, PresignedUploadResponse } from './upload.service';
 
 interface UploadFile {
   file: File;
@@ -20,6 +21,7 @@ interface UploadFile {
 export class UploadComponent {
   files: UploadFile[] = [];
   http = inject(HttpService);
+  uploadService = inject(UploadService);
   errorMessage = inject(ErrorMessageService);
   urlApi = environment.apiUrl;
   uploading = false;
@@ -83,31 +85,53 @@ export class UploadComponent {
     this.previewImage = null;
   }
 
-  onUpload(): void {
+  // НОВЫЙ МЕТОД ЗАГРУЗКИ
+  async onUpload(): Promise<void> {
     if (this.files.length === 0) return;
-
-    const formData = new FormData();
-    this.files.forEach(f => formData.append('files', f.file));
 
     this.uploading = true;
 
-    // this.http.post(this.uploadUrl, formData, {
-    //   reportProgress: true,
-    //   observe: 'events'
-    // }).subscribe({
-    //   next: event => {
-    //     if (event.type === HttpEventType.Response) {
-    //       alert('Файлы успешно отправлены!');
-    //       this.files = [];
-    //       this.uploading = false;
-    //     }
-    //   },
-    //   error: () => {
-    //     alert('Ошибка при загрузке файлов');
-    //     this.uploading = false;
-    //   }
-    // });
+    try {
+      // Загружаем файлы последовательно
+      for (const uploadFile of this.files) {
+        try {
+          // 1. Получаем Presigned URL от бэкенда
+          const photoRequest: PhotoRequest = {
+            name: uploadFile.file.name,
+            contentType: uploadFile.file.type,
+            fileSize: uploadFile.file.size
+          };
 
+          const response = await this.uploadService.initiateUpload(photoRequest).toPromise();
+
+          if (!response) {
+            throw new Error('Не удалось получить URL для загрузки');
+          }
+
+          // 2. Загружаем файл напрямую в S3
+          const s3Response = await this.uploadService.uploadToS3(response.uploadUrl, uploadFile.file);
+
+          if (s3Response.ok) {
+            console.log('Файл успешно загружен:', uploadFile.file.name);
+            console.log('Постоянный URL:', response.objectKey);
+          } else {
+            throw new Error(`Ошибка загрузки в S3: ${s3Response.status}`);
+          }
+
+        } catch (error) {
+          console.error(`Ошибка загрузки файла ${uploadFile.file.name}:`, error);
+        }
+      }
+
+      console.error('Загрузка завершена');
+      this.files = []; // Очищаем список после загрузки
+
+    } catch (error) {
+      console.error('Общая ошибка загрузки:', error);
+      console.error('Ошибка при загрузке файлов');
+    } finally {
+      this.uploading = false;
+    }
   }
 
 }

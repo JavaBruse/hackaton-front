@@ -23,7 +23,6 @@
       <span class="label">Админка</span>
     </a>
     }
-
     <a class="item" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
       (click)="closeMenu()">
       <mat-icon>home</mat-icon>
@@ -35,29 +34,23 @@
       <span class="label">Загрузка фото</span>
     </a>
 
-    <a class="item" routerLink="/FAQ" routerLinkActive="active" (click)="closeMenu()">
-      <mat-icon>help_outline</mat-icon>
-      <span class="label">FAQ</span>
-    </a>
-    <a class="item" routerLink="/OpenAPI" routerLinkActive="active" (click)="closeMenu()">
-      <mat-icon>book</mat-icon>
-      <span class="label">api</span>
-    </a>
-
     } @else {
     <a class="item" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
       (click)="closeMenu()">
       <mat-icon>home</mat-icon>
       <span class="label">Главная</span>
     </a>
+    }
+  </div>
+  <div class="sidebar-bottom">
+    <a class="item" routerLink="/OpenAPI" routerLinkActive="active" (click)="closeMenu()">
+      <mat-icon>book</mat-icon>
+      <span class="label">api</span>
+    </a>
     <a class="item" routerLink="/FAQ" routerLinkActive="active" (click)="closeMenu()">
       <mat-icon>help_outline</mat-icon>
       <span class="label">FAQ</span>
     </a>
-    }
-  </div>
-
-  <div class="sidebar-bottom">
     <div class="divider"></div>
     <a class="item" role="button" (click)="onThemeSwitchChange()">
       <mat-icon>{{ isLightTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>

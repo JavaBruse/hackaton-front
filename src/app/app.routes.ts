@@ -14,6 +14,7 @@ export const routes: Routes = [
     // { path: '', redirectTo: 'login', canActivate: [AuthGuard] },
     { path: '', component: RootComponent, pathMatch: 'full' },
     { path: 'FAQ', component: FaqComponent },
+    { path: 'OpenAPI', component: ApiDocsComponent },
     { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
     { path: 'registration', component: RegistrationComponent, canActivate: [LoginGuard] },
     { path: 'welome', component: WelcomeComponent, canActivate: [LoginGuard] },
