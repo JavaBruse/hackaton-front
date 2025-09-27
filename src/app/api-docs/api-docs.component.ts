@@ -25,7 +25,7 @@ export class ApiDocsComponent implements OnInit {
     this.services = this.apiDocsService.getServices();
 
     if (this.services.length > 0 && !this.apiDocsService.selectedService()) {
-      this.apiDocsService.selectService(this.services[0]);
+      this.apiDocsService.selectService(this.services[1]);
     }
   }
 
