@@ -36,10 +36,24 @@ export class ApiDocsComponent implements OnInit {
     const container = document.getElementById('swagger-ui');
     if (container) container.innerHTML = '';
 
+    const token = localStorage.getItem('Authorization');
+
     SwaggerUIBundle({
       dom_id: '#swagger-ui',
       url: service.url,
-      presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset]
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+      requestInterceptor: (request: any) => {
+        // Добавляем токен к каждому запросу Swagger UI
+        if (token) {
+          request.headers['Authorization'] = token;
+        }
+        return request;
+      },
+      authorizations: {
+        Bearer: {
+          token: token ? token.replace('Bearer ', '') : ''
+        }
+      }
     });
   }
 }
