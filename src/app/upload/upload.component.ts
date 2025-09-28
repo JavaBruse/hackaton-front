@@ -6,6 +6,8 @@ import { HttpService } from '../services/http.service';
 import { ErrorMessageService } from '../services/error-message.service';
 import { environment } from '../../environments/environment';
 import { UploadService, PhotoRequest } from './upload.service';
+import { ActivatedRoute } from '@angular/router';
+
 
 interface UploadFile {
   file: File;
@@ -32,6 +34,17 @@ export class UploadComponent {
   uploading = false;
   dragOver = false;
   previewImage: string | null = null;
+  id!: string;
+
+  constructor(private route: ActivatedRoute) { }
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.id = params.get('id')!;
+      // this.postService.loadAll(this.id);
+    });
+  }
+
 
   // счётчик завершённых (успешных) загрузок
   private _uploadedCount = 0;
@@ -146,6 +159,7 @@ export class UploadComponent {
       // 1) запрос presigned
       const photoRequest: PhotoRequest = {
         name: uploadFile.file.name,
+        taskId: this.id,
         contentType: uploadFile.file.type,
         fileSize: uploadFile.file.size
       };

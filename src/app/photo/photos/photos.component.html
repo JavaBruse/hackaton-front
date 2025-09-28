@@ -1,0 +1,68 @@
+<div class="sources-container">
+    <div class="cards-grid">
+
+        @for (photo of phtotService.photos(); track photo.id) {
+        <mat-card tabindex="0" class="card-style">
+            <div class="card-layout">
+                <div class="card-main">
+                    <mat-card-header>
+
+                    </mat-card-header>
+                    <mat-card-content class="description">
+                        <div class="photo-container">
+                            <!-- Фото слева -->
+                            <div class="photo-section">
+                                <img [src]="photo.filePath" [alt]="photo.name" class="photo-image"
+                                    style="max-width: 100%; height: auto;">
+                            </div>
+
+                            <!-- Параметры справа -->
+                            <div class="parameters-section">
+                                <h3>Основные параметры</h3>
+                                <p><strong>Всего фото: </strong>{{phtotService.photos().length}} </p>
+                                <p><strong>ID:</strong> {{photo.id}}</p>
+                                <p><strong>Название:</strong> {{photo.name}}</p>
+                                <p><strong>Хэш файла:</strong> {{photo.fileHash}}</p>
+                                <p><strong>Тип контента:</strong> {{photo.contentType}}</p>
+                                <p><strong>Обновлено:</strong> {{photo.updatedAt | date}}</p>
+
+                                <!-- Метаданные камеры -->
+                                @if(photo.camMetadataResponse){
+                                <div class="metadata-section">
+                                    <h4>Метаданные камеры</h4>
+                                    <p><strong>ID камеры:</strong> {{photo.camMetadataResponse.id}}</p>
+                                    <p><strong>Адрес:</strong> {{photo.camMetadataResponse.address}}</p>
+                                    <p><strong>Широта:</strong> {{photo.camMetadataResponse.latitude}}</p>
+                                    <p><strong>Долгота:</strong> {{photo.camMetadataResponse.longitude}}</p>
+                                    <p><strong>Азимут:</strong> {{photo.camMetadataResponse.bearing}}</p>
+                                    <p><strong>Высота:</strong> {{photo.camMetadataResponse.elevation}}</p>
+                                </div>
+                                }
+
+                                <!-- Метаданные конструкций -->
+                                @if(photo.constructMetadataResponses){
+                                <div class="metadata-section">
+                                    @for (construct of photo.constructMetadataResponses; track construct.id) {
+                                    <div class="construct-item">
+                                        <p><strong>ID конструкции:</strong> {{construct.id}}</p>
+                                        <p><strong>Тип:</strong> {{construct.type}}</p>
+                                        <p><strong>Адрес:</strong> {{construct.address}}</p>
+                                        <p><strong>Широта:</strong> {{construct.latitude}}</p>
+                                        <p><strong>Долгота:</strong> {{construct.longitude}}</p>
+                                        <hr>
+                                    </div>
+                                    }
+                                </div>
+                                <button matButton="elevated"
+                                    (click)="openDialog('0ms', '0ms', photo.id)">Удалить</button>
+                                }
+
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </div>
+            </div>
+        </mat-card>
+        }
+    </div>
+</div>

@@ -9,9 +9,9 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { FaqComponent } from './faq/faq.component';
 import { UploadComponent } from './upload/upload.component';
 import { ApiDocsComponent } from './api-docs/api-docs.component';
+import { PhotosComponent } from './photo/photos/photos.component';
 
 export const routes: Routes = [
-    // { path: '', redirectTo: 'login', canActivate: [AuthGuard] },
     { path: '', component: RootComponent, pathMatch: 'full' },
     { path: 'FAQ', component: FaqComponent },
     { path: 'OpenAPI', component: ApiDocsComponent },
@@ -19,7 +19,9 @@ export const routes: Routes = [
     { path: 'registration', component: RegistrationComponent, canActivate: [LoginGuard] },
     { path: 'welome', component: WelcomeComponent, canActivate: [LoginGuard] },
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-    { path: 'upload', component: UploadComponent, canActivate: [AuthGuard] },
+    { path: 'upload/:id', component: UploadComponent, canActivate: [AuthGuard] },
+    { path: 'all-photo/:id', component: PhotosComponent, canActivate: [AuthGuard] },
+    { path: 'all-photo', component: PhotosComponent, canActivate: [AuthGuard] },
     { path: 'OpenAPI', component: ApiDocsComponent, canActivate: [AuthGuard] },
     { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

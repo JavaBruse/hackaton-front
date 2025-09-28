@@ -27,11 +27,7 @@
   --warn: #f44336;              /* Red для ошибок */
 
   --card-thickness: 0 2px 0 rgba(0, 70, 71, 0.781); /* белая грань вместо чёрной */
-  --card-shadow: 0 4px 12px rgba(0,0,0,0.6);
-  --card-shadow-hover: 
-      0 12px 24px rgba(0,0,0,0.8),
-      0 6px 12px rgba(0,0,0,0.5);
-  --card-shadow-active: 0 6px 12px rgba(0,0,0,0.7);
+
 
   --star-color: rgb(78, 167, 162); 
   --greeen: #00f700;
@@ -60,11 +56,6 @@
   --warn: #f44336;               /* Red для ошибок */
 
   --card-thickness: 0 2px 0 rgb(78, 167, 162);
-  --card-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  --card-shadow-hover: 
-      0 12px 24px rgba(0,0,0,0.18),
-      0 6px 12px rgba(0,0,0,0.10);
-  --card-shadow-active: 0 6px 12px rgba(0,0,0,0.16);
   
   --star-color: rgba(0, 70, 71);  
   --greeen: #004e00;
@@ -180,8 +171,8 @@ main {
 .mat-mdc-card-header, .mat-mdc-card-content {
   padding-bottom: 5px !important;
   padding-top: 5px !important;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
 }
 
 .card-side {
@@ -208,112 +199,12 @@ main {
   margin: 0;
 }
 
-.card-style[tabindex] {
-  min-height: 120px;
-  border-radius: 12px;
-  background: var(--card);
-  color: var(--color);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: var(--card-thickness), var(--card-shadow) !important;;
-}
-
-.card-style:hover{
-  transform: translateY(-6px);
-  box-shadow: var(--card-thickness), var(--card-shadow-hover) !important;
-}
-
-// .card-style:active {
-//   transform: translateY(-2px);
-//   box-shadow: var(--card-thickness), var(--card-shadow-active) !important;
-// }
 
 .card-component-padding {
   padding: 10px;
   padding-bottom: 0;
 }
 ////////////////////
-
-
-
-/* ////////////////// star */
-.star {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    background-color: rgba(240, 248, 255, 0);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.star .checkbox {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    z-index: 20;
-    cursor: pointer;
-}
-
-.star .svg-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.star .svg-outline,
-.star .svg-filled {
-    fill: var(--star-color);
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    transition: all 0.3s ease;
-}
-
-.star .svg-filled {
-    animation: keyframes-svg-filled 1s;
-    opacity: 0;
-    transform: scale(0);
-}
-
-.star .svg-celebrate {
-    position: absolute;
-    display: none;
-    stroke: var(--star-color);
-    fill: var(--star-color);
-    stroke-width: 2px;
-}
-
-.star .particle {
-    position: absolute;
-    animation-fill-mode: forwards;
-    display: none;
-}
-
-.star .checkbox:checked~.svg-container .svg-outline {
-    opacity: 0;
-}
-
-.star .checkbox:checked~.svg-container .svg-filled {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.star .checkbox:not(:checked)~.svg-container .svg-filled {
-    animation: keyframes-svg-unfilled 0.3s forwards;
-}
-
-.star .checkbox:checked~.svg-container .svg-celebrate {
-    display: block;
-}
-
-.star .checkbox:checked~.svg-container .particle {
-    display: block;
-}
-
-/* ////////////////// star */
 
 
 
