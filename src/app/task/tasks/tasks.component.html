@@ -1,11 +1,25 @@
 <div class="sources-container">
+
+    <div class="header-container">
+        <!-- поиск -->
+        <div class="search-menu-button">
+            <mat-button-toggle-group [formControl]="selectedControl" aria-label="Filter type">
+                <mat-button-toggle value="all"><mat-icon>apps</mat-icon></mat-button-toggle>
+                <mat-button-toggle value="TASK_NEW"><mat-icon>fiber_new</mat-icon></mat-button-toggle>
+                <mat-button-toggle value="IN_PROGRESS"><mat-icon>autorenew</mat-icon></mat-button-toggle>
+                <mat-button-toggle value="COMPLETED"><mat-icon>flag</mat-icon></mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+        <button matButton="elevated" (click)="taskService.setVisibleAdd(true)">Создать задачу</button>
+    </div>
+
     <div class="cards-grid">
         @if (taskService.visibleAdd()) {
         <mat-card tabindex="0" class="card-style">
             <app-task-add></app-task-add>
         </mat-card>
         }
-        @for (task of taskService.tasks(); track task.id) {
+        @for (task of filteredValues(); track task.id) {
         @if (editTaskId === task.id) {
         <mat-card tabindex="0" class="card-style">
             <app-task-edit [task]="task" (saved)="finishEdit()" (cancelled)="finishEdit()"></app-task-edit>
@@ -19,23 +33,23 @@
                             <p>Статус задачи: {{ task.status }}</p>
                             <mat-card-title>{{ task.name }}</mat-card-title>
                         </div>
-
+                    </mat-card-header>
+                    <mat-card-content class="description">
                         <div>
                             <div>Дата создания:: {{ task.createdAt | date:'dd.MM.yy HH:mm' }}</div>
                             <div>Дата обновления: {{ task.updatedAt | date:'dd.MM.yy HH:mm' }}</div>
                         </div>
-                        <button matButton="elevated">Запустить анализ!</button>
-                    </mat-card-header>
-                    <mat-card-content class="description">
-                        <button matButton="elevated" (click)="openDialog('0ms', '0ms', task.id)">Удалить</button>
-                        <button matButton="elevated" routerLink="/upload/{{ task.id }}">Добавить фотографии для
-                            анализа</button>
-
-                        <button matButton="elevated" routerLink="/all-photo/{{ task.id }}">Фотографии задачи</button>
-
                     </mat-card-content>
                 </div>
+                <div class="card-side">
+                    <button matButton="elevated">Запустить анализ!</button>
+                    <button matButton="elevated" routerLink="/upload/{{ task.id }}">Загрузить фотографии</button>
+                    <button matButton="elevated" routerLink="/all-photo/{{ task.id }}">Фотографии</button>
+                    <button matButton="elevated" (click)="openDialog('0ms', '0ms', task.id)">Удалить</button>
+                </div>
             </div>
+
+
         </mat-card>
         }
         }

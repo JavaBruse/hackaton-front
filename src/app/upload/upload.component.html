@@ -5,8 +5,12 @@
         <p>Перетащите файлы сюда или выберите вручную</p>
         <input type="file" (change)="onFileSelected($event)" multiple accept="image/*,.zip" style="display: none;"
             #fileInput>
-        <button type="button" (click)="fileInput.click()">Выбрать файлы</button>
+        <button matButton="elevated" (click)="fileInput.click()">Выбрать файлы</button>
     </div>
+
+    @if (files.length > 0) {
+    <button matButton="elevated" class="send-button" (click)="onUpload()" [disabled]="uploading">Отправить</button>
+    }
     <!-- список файлов -->
     @if (files.length > 0) {
     <h3>Файлы:</h3>
@@ -20,15 +24,15 @@
                     <strong>{{ f.file.name }}</strong>
                     <div class="size">{{ formatSize(f.file.size) }}</div>
                 </span>
-                <button (click)="showPreview(f)">Просмотр</button>
-                <button (click)="removeFile(i)">Удалить</button>
+                <button matButton="elevated" (click)="showPreview(f)">Просмотр</button>
+                <button matButton="elevated" (click)="removeFile(i)">Удалить</button>
             </div>
             } @else {
             <div class="file-row">
                 <span class="file-info">📦 <strong>{{ f.file.name }}</strong>
                     <div class="size">{{ formatSize(f.file.size) }}</div>
                 </span>
-                <button (click)="removeFile(i)">Удалить</button>
+                <button matButton="elevated" (click)="removeFile(i)">Удалить</button>
             </div>
             }
 
@@ -47,10 +51,6 @@
         </li>
         }
     </ul>
-    }
-
-    @if (files.length > 0) {
-    <button (click)="onUpload()" [disabled]="uploading">Отправить</button>
     }
 
     <!-- overlay предпросмотр -->

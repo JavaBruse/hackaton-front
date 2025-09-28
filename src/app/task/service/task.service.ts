@@ -53,4 +53,8 @@ export class TaskService {
         this.isVisibleAddSignal.set(false);
         this.isVisibleEditSignal.set(false);
     }
+
+    setVisibleAdd(value: boolean) {
+        this.isVisibleAddSignal.set(value);
+    }
 }

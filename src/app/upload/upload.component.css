@@ -132,6 +132,7 @@ ul {
 /* overlay затемнение (без спиннера) */
 .overlay {
     position: fixed;
+    padding-left: 27px;
     top: 0;
     left: 0;
     width: 100%;
@@ -141,6 +142,25 @@ ul {
     align-items: center;
     justify-content: center;
     z-index: 999;
+}
+
+@media (max-width: 768px) {
+    main {
+        padding-left: 0;
+    }
+
+    .overlay {
+        padding-left: 0px;
+    }
+
+    .search-field {
+        width: 100%;
+        max-width: 768px;
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .preview-image {
@@ -157,4 +177,8 @@ ul {
     background: rgba(255, 255, 255, 0.06);
     padding: 12px 20px;
     border-radius: 8px;
+}
+
+.send-button {
+    width: 100%;
 }

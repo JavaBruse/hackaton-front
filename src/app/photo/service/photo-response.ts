@@ -3,6 +3,7 @@ export interface PhotoResponse {
     filePath?: string;
     fileHash?: string;
     name: string;
+    status: "TASK_NEW" | "IN_PROGRESS" | "COMPLETED";
     contentType?: string;
     updatedAt: number;
     camMetadataResponse?: CamMetadataResponse;  // опционально, может отсутствовать

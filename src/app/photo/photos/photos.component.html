@@ -1,7 +1,25 @@
 <div class="sources-container">
-    <div class="cards-grid">
 
-        @for (photo of phtotService.photos(); track photo.id) {
+    <div class="header-container">
+        <div class="search-menu-button">
+            <mat-button-toggle-group [formControl]="selectedControl" aria-label="Filter type">
+                <mat-button-toggle value="all"><mat-icon>apps</mat-icon></mat-button-toggle>
+                <mat-button-toggle value="TASK_NEW"><mat-icon>fiber_new</mat-icon></mat-button-toggle>
+                <mat-button-toggle value="IN_PROGRESS"><mat-icon>autorenew</mat-icon></mat-button-toggle>
+                <mat-button-toggle value="COMPLETED"><mat-icon>flag</mat-icon></mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Поиск</mat-label>
+            <input matInput [formControl]="searchControl">
+            @if (searchControl.value) {
+            <mat-icon matSuffix (click)="clearFilter()">close</mat-icon>
+            }
+        </mat-form-field>
+    </div>
+
+    <div class="cards-grid">
+        @for (photo of filteredValues(); track photo.id) {
         <mat-card tabindex="0" class="card-style">
             <div class="card-layout">
                 <div class="card-main">
@@ -53,13 +71,15 @@
                                     </div>
                                     }
                                 </div>
-                                <button matButton="elevated"
-                                    (click)="openDialog('0ms', '0ms', photo.id)">Удалить</button>
+
                                 }
 
                             </div>
                         </div>
                     </mat-card-content>
+                </div>
+                <div class="card-side">
+                    <button matButton="elevated" (click)="openDialog('0ms', '0ms', photo.id)">Удалить</button>
                 </div>
             </div>
         </mat-card>

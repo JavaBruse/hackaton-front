@@ -1,1 +1,20 @@
-<p>task-add works!</p>
+<div class="card-layout" [formGroup]="form">
+    <div class="card-main card-component-padding">
+        <mat-card-header>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Название</mat-label>
+                <input matInput formControlName="name" maxlength="100" placeholder="Введите название">
+                <mat-hint align="end">{{ form.get('name')?.value?.length || 0 }} / 100</mat-hint>
+            </mat-form-field>
+        </mat-card-header>
+    </div>
+    <!-- Кнопки -->
+    <div class="card-side">
+        <a class="button-size" (click)="cancel()" matTooltip="Отмена">
+            <mat-icon>cancel</mat-icon>
+        </a>
+        <a class="button-size" (click)="save()" matTooltip=" Сохранить">
+            <mat-icon>save</mat-icon>
+        </a>
+    </div>
+</div>

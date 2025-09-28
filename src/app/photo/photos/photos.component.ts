@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, computed, Component, effect, inject, signal } from '@angular/core';
 import { ErrorMessageService } from '../../services/error-message.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
@@ -18,6 +17,10 @@ import { PhotoService } from '../service/photo.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../../dialog/dialog.component';
+import { PhotoResponse } from '../service/photo-response';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 
 @Component({
@@ -47,6 +50,56 @@ export class PhotosComponent {
   errorMessegeService = inject(ErrorMessageService);
   idTask!: string;
   readonly dialog = inject(MatDialog);
+  entityes = signal<PhotoResponse[]>([]);
+
+
+  /////////////////////////
+  selectedControl = new FormControl<'all' | 'TASK_NEW' | 'IN_PROGRESS' | 'COMPLETED'>('all');
+  searchControl = new FormControl('');
+  searchSignal = toSignal(
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ),
+    { initialValue: '' }
+  );
+
+  selectedSignal = toSignal(this.selectedControl.valueChanges, {
+    initialValue: 'all' as const
+  });
+
+  filteredValues = computed(() => {
+    const searchText = this.searchSignal()?.trim().toLowerCase();
+    const filterType = this.selectedSignal();
+    let filtered = [...this.phtotService.photos()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+
+    switch (filterType) {
+      case 'TASK_NEW':
+        filtered = filtered.filter(f => f.status === "TASK_NEW");
+        break;
+      case 'IN_PROGRESS':
+        filtered = filtered.filter(f => f.status === "IN_PROGRESS");
+        break;
+      case 'COMPLETED':
+        filtered = filtered.filter(f => f.status === "COMPLETED");
+        break;
+    }
+
+    if (searchText) {
+      filtered = filtered.filter(f =>
+        f.name?.toLowerCase().includes(searchText)
+        // f.data?.toLowerCase().includes(searchText) 
+      );
+    }
+
+    return filtered;
+  });
+
+  clearFilter() {
+    this.searchControl.setValue('');
+  }
+  /////////////////////////
+
 
   constructor(private route: ActivatedRoute) {
     effect(() => {

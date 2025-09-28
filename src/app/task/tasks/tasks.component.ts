@@ -3,8 +3,8 @@ import { ErrorMessageService } from '../../services/error-message.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
@@ -20,6 +20,8 @@ import { TaskEditComponent } from "../task-edit/task-edit.component";
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../../dialog/dialog.component';
+import { StyleSwitcherService } from '../../services/style-switcher.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-tasks',
@@ -48,12 +50,41 @@ import { DialogComponent } from '../../dialog/dialog.component';
 export class TasksComponent {
   taskService = inject(TaskService);
   errorMessegeService = inject(ErrorMessageService);
+  styleSwithService = inject(StyleSwitcherService);
   editTaskId: string | null = null;
+  entityes = signal<TaskResponse[]>([]);
+
   readonly dialog = inject(MatDialog);
 
-  getPrivatStatusIcon(isPrivate: boolean): string {
-    return isPrivate ? 'visibility_off' : 'visibility';
-  }
+  /////////////////////////"TASK_NEW" | "IN_PROGRESS" | "COMPLETED"
+
+  selectedControl = new FormControl<'all' | 'TASK_NEW' | 'IN_PROGRESS' | 'COMPLETED'>('all');
+  searchControl = new FormControl('');
+
+
+  selectedSignal = toSignal(this.selectedControl.valueChanges, {
+    initialValue: 'all' as const
+  });
+
+  filteredValues = computed(() => {
+    const filterType = this.selectedSignal();
+    let filtered = [...this.taskService.tasks()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+    switch (filterType) {
+      case 'TASK_NEW':
+        filtered = filtered.filter(f => f.status === "TASK_NEW");
+        break;
+      case 'IN_PROGRESS':
+        filtered = filtered.filter(f => f.status === "IN_PROGRESS");
+        break;
+      case 'COMPLETED':
+        filtered = filtered.filter(f => f.status === "COMPLETED");
+        break;
+    }
+
+    return filtered;
+  });
+
+  /////////////////////////
 
   constructor() {
     effect(() => {

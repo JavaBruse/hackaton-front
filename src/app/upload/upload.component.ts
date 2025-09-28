@@ -7,6 +7,7 @@ import { ErrorMessageService } from '../services/error-message.service';
 import { environment } from '../../environments/environment';
 import { UploadService, PhotoRequest } from './upload.service';
 import { ActivatedRoute } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 
 
 interface UploadFile {
@@ -21,7 +22,7 @@ interface UploadFile {
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [MatIconModule, MatButtonModule],
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.css']
 })
