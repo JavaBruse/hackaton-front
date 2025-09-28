@@ -1,5 +1,4 @@
-<div class="sources-container">
-
+<div class="photo-container">
     <div class="header-container">
         <div class="search-menu-button">
             <mat-button-toggle-group [formControl]="selectedControl" aria-label="Filter type">
@@ -9,6 +8,16 @@
                 <mat-button-toggle value="COMPLETED"><mat-icon>flag</mat-icon></mat-button-toggle>
             </mat-button-toggle-group>
         </div>
+        <mat-form-field appearance="outline">
+            <mat-label>Выберите диапазон</mat-label>
+            <mat-date-range-input [rangePicker]="picker" [formGroup]="range">
+                <input matStartDate formControlName="start" placeholder="с даты">
+                <input matEndDate formControlName="end" placeholder="до даты">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+
         <mat-form-field appearance="outline" class="search-field">
             <mat-label>Поиск</mat-label>
             <input matInput [formControl]="searchControl">
