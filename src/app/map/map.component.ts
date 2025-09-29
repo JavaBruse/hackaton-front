@@ -4,14 +4,18 @@ declare var ymaps3: any;
 
 @Component({
   selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css']
+  template: '<div #mapContainer class="map-container"></div>',
+  styles: [`
+    .map-container {
+      width: 100%;
+      height: 400px;
+    }
+  `]
 })
 export class MapComponent implements AfterViewInit {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
 
   private map: any;
-  private LOCATION = { center: [37.617494, 55.755826], zoom: 10 };
 
   async ngAfterViewInit() {
     await this.loadYmapsScript();
@@ -33,22 +37,27 @@ export class MapComponent implements AfterViewInit {
   }
 
   private async initializeMap() {
+    // Ждем загрузки API
     await ymaps3.ready;
 
-    // Используем нативный API Яндекс Карт без React
     const { YMap, YMapDefaultSchemeLayer } = ymaps3;
 
-    // Создаем карту
-    this.map = new YMap(this.mapContainer.nativeElement, {
-      location: this.LOCATION
-    });
+    // Инициализируем карту
+    this.map = new YMap(
+      this.mapContainer.nativeElement,
+      {
+        location: {
+          center: [37.588144, 55.733842],
+          zoom: 10
+        }
+      }
+    );
 
-    // Добавляем слои
+    // Добавляем слой карты
     this.map.addChild(new YMapDefaultSchemeLayer());
   }
 
   ngOnDestroy() {
-    // Уничтожаем карту при удалении компонента
     if (this.map) {
       this.map.destroy();
     }
