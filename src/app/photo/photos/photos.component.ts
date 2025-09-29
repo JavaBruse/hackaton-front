@@ -24,6 +24,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MapComponent } from "../../map/map.component";
 
 @Component({
   selector: 'app-photos',
@@ -42,7 +43,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     MatButtonModule,
     MatCheckboxModule,
     DatePipe,
-    MatFormFieldModule, MatDatepickerModule
+    MatFormFieldModule, MatDatepickerModule,
+    MapComponent
   ],
   templateUrl: './photos.component.html',
   styleUrl: './photos.component.css',
