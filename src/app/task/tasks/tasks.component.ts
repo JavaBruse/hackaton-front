@@ -150,4 +150,10 @@ export class TasksComponent {
       }
     });
   }
+
+  getReport(id: string) {
+    if (id) {
+
+    }
+  }
 }
