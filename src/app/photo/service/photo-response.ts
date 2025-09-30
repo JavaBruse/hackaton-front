@@ -1,6 +1,7 @@
 export interface PhotoResponse {
     id: string;
-    filePath?: string;
+    filePathOriginal?: string,
+    filePathComplete: string,
     fileHash?: string;
     name: string;
     status: "TASK_NEW" | "IN_PROGRESS" | "COMPLETED";
@@ -21,6 +22,7 @@ export interface CamMetadataResponse {
 
 export interface ConstructMetadataResponse {
     id: string;
+    position?: number;
     type?: string;
     address?: string;
     latitude?: number;

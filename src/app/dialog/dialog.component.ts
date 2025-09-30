@@ -7,6 +7,8 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
+import { TaskService } from '../task/service/task.service';
+
 
 @Component({
   selector: 'app-dialog',
@@ -16,7 +18,7 @@ import {
 })
 export class DialogComponent {
   readonly dialogRef = inject(MatDialogRef<DialogComponent>);
-
+  taskService = inject(TaskService);
   onNoClick(): void {
     this.dialogRef.close(false);
   }

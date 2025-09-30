@@ -39,8 +39,26 @@
                         <div class="photo-container">
                             <!-- Фото слева -->
                             <div class="photo-section">
-                                <img [src]="photo.filePath" [alt]="photo.name" class="photo-image"
+                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
                                     style="max-width: 100%; height: auto;">
+                                <div class="current-marker-info">
+                                    <p>Текущая метка: <strong>широта: {{ selectedMapMarker.lat }}, долгота:
+                                            {{selectedMapMarker.lng}}</strong></p>
+                                </div>
+                                <app-map-2gis [marker]="selectedMapMarker">
+                                </app-map-2gis>
+                                <div class="map-controls">
+                                    <mat-button-toggle-group appearance="legacy" [formControl]="mapControl"
+                                        aria-label="Выбор метки на карте">
+                                        @for (construct of allConstructs(); track construct.id) {
+                                        <mat-button-toggle [value]="construct.id">
+                                            <mat-icon>location_on</mat-icon>
+                                            Сооружение: {{ construct.position }}
+                                        </mat-button-toggle>
+                                        }
+                                    </mat-button-toggle-group>
+                                </div>
+
                             </div>
 
                             <!-- Параметры справа -->
@@ -85,7 +103,6 @@
 
                             </div>
                         </div>
-                        <app-map></app-map>
                     </mat-card-content>
                 </div>
                 <div class="card-side">

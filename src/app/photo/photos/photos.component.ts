@@ -57,6 +57,36 @@ export class PhotosComponent {
   idTask!: string;
   readonly dialog = inject(MatDialog);
   entityes = signal<PhotoResponse[]>([]);
+
+  mapControl = new FormControl('1');
+
+  allConstructs = computed(() => {
+    const constructs = this.filteredValues().flatMap(photo =>
+      photo.constructMetadataResponses.map(construct => ({
+        id: construct.id,
+        lat: construct.latitude || 0,
+        lng: construct.longitude || 0,
+        position: construct.position,
+        title: construct.address || `адрес не определен`,
+        type: construct.type || 'unknown',
+        photoId: photo.id
+      })).filter(construct => construct.lat !== 0 && construct.lng !== 0)
+    );
+
+    return constructs;
+  });
+
+  get selectedMapMarker() {
+    const constructs = this.allConstructs();
+    if (constructs.length === 0) {
+      return { lat: 55.755826, lng: 37.617494, title: 'Москва', id: 'default' };
+    }
+    const selectedId = this.mapControl.value;
+    const selectedConstruct = constructs.find(c => c.id === selectedId);
+
+    return selectedConstruct || constructs[0];
+  }
+
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null)
@@ -111,7 +141,6 @@ export class PhotosComponent {
     if (searchText) {
       filtered = filtered.filter(f =>
         f.name?.toLowerCase().includes(searchText)
-        // f.data?.toLowerCase().includes(searchText) 
       );
     }
 
@@ -135,7 +164,6 @@ export class PhotosComponent {
         return startCondition && endCondition;
       });
     }
-
     return filtered;
   });
 
@@ -152,16 +180,20 @@ export class PhotosComponent {
   }
   /////////////////////////
 
-
   constructor(private route: ActivatedRoute) {
     effect(() => {
       if (this.idTask) {
         this.phtotService.loadAllByTask(this.idTask);
-
       } else {
         this.phtotService.loadAll();
       }
     });
+
+    // СЛЕДИМ ЗА ИЗМЕНЕНИЯМИ СЕЛЕКТА КАРТЫ
+    // this.mapControl.valueChanges.subscribe(value => {
+    //   console.log('Селект карты изменен:', value);
+    //   console.log('selectedMapMarker:', this.selectedMapMarker);
+    // });
   }
 
   ngOnInit() {

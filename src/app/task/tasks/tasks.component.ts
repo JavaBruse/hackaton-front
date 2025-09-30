@@ -113,8 +113,17 @@ export class TasksComponent {
       this.errorMessegeService.showError('id не может быть null');
     }
   }
+  startTask(id: string | null) {
+    if (id) {
+      this.taskService.startTask(id);
+    } else {
+      this.errorMessegeService.showError('id не может быть null');
+    }
+  }
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string, photoId: string | null): void {
+    this.taskService.dialogTitle = "Удаление";
+    this.taskService.dialogDisk = "Действие не обратимо, Вы уверены?";
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '250px',
       enterAnimationDuration,
@@ -123,6 +132,21 @@ export class TasksComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
         this.delete(photoId);
+      }
+    });
+  }
+
+  openDialogTask(enterAnimationDuration: string, exitAnimationDuration: string, taskId: string | null): void {
+    this.taskService.dialogTitle = "Запуск задачи";
+    this.taskService.dialogDisk = "Запуск задачи не обратим, пока задача не завершится, её нельзя будет удалить!";
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '250px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.startTask(taskId);
       }
     });
   }

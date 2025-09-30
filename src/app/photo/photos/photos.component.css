@@ -24,3 +24,17 @@ svg {
     height: auto;
     display: block;
 }
+
+.map-controls {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.map-controls mat-button-toggle-group {
+    width: 100%;
+}
+
+.map-controls mat-button-toggle {
+    flex: 1;
+}
