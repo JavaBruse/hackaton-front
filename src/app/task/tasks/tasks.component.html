@@ -28,8 +28,15 @@
             <div class="card-layout">
                 <div class="card-main">
                     <mat-card-header>
-                        <div>
-                            <p>Статус задачи: {{ task.status }}</p>
+                        <div class="card-side">
+                            @if(task.status==='TASK_NEW'){
+                            <mat-icon class="icon-menu">fiber_new</mat-icon>
+
+                            } @else if (task.status==='IN_PROGRESS') {
+                            <mat-icon class="icon-menu">autorenew</mat-icon>
+                            } @else {
+                            <mat-icon class="icon-menu">flag</mat-icon>
+                            }
                             <mat-card-title>{{ task.name }}</mat-card-title>
                         </div>
                     </mat-card-header>
