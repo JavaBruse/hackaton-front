@@ -1,20 +1,50 @@
-import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { PhotosComponent } from '../photo/photos/photos.component';
+import { ConstructMetadataResponse } from '../photo/service/photo-response';
+import { MatCardModule } from '@angular/material/card';
+
 
 @Component({
   selector: 'app-map-2gis',
   templateUrl: './map.component.html',
-  styleUrl: './map.component.css'
+  styleUrl: './map.component.css',
+  imports: [MatButtonToggleModule, MatIconModule, ReactiveFormsModule, MatCardModule]
 })
 export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('mapContainer') mapContainer!: ElementRef;
-
-  @Input() marker: { lat: number, lng: number, title?: string, id?: string } | null = null;
+  photoComponent = inject(PhotosComponent);
+  mapControl = new FormControl('');
 
   private map: any;
   private mapgl: any;
   private currentMarker: any = null;
 
+  constructor() {
+    this.mapControl.valueChanges.subscribe(value => {
+      this.updateMarker();
+    });
+  }
+
+  get selectedConstruct(): ConstructMetadataResponse | null {
+    const constructs = this.photoComponent.photo()?.constructMetadataResponses;
+    if (!constructs || constructs.length === 0) {
+      return null;
+    }
+
+    const selectedId = this.mapControl.value;
+    if (selectedId) {
+      return constructs.find(c => c.id === selectedId) || constructs[0];
+    }
+
+    return constructs[0];
+  }
+
   ngAfterViewInit() {
+    console.log(this.photoComponent.photo());
+
     this.loadMapScript();
   }
 
@@ -27,7 +57,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
     const script = document.createElement('script');
     script.src = `https://mapgl.2gis.com/api/js?key=50424773-ff42-4459-b644-fa2a6f07d620`;
     script.onload = () => {
-      // console.log('2GIS API загружен');
       setTimeout(() => this.initializeMap(), 100);
     };
     script.onerror = (error) => {
@@ -45,80 +74,91 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     try {
-      // УНИЧТОЖАЕМ СТАРУЮ КАРТУ ПЕРЕД СОЗДАНИЕМ НОВОЙ
       this.destroyMap();
-      const center = this.marker
-        ? [this.marker.lng, this.marker.lat]
+
+      const selectedConstruct = this.selectedConstruct;
+      const center = selectedConstruct?.latitude && selectedConstruct?.longitude
+        ? [selectedConstruct.longitude, selectedConstruct.latitude]
         : [37.617494, 55.755826];
 
       this.map = new mapgl.Map(this.mapContainer.nativeElement, {
         key: '50424773-ff42-4459-b644-fa2a6f07d620',
         center: center,
-        zoom: this.marker ? 15 : 12
+        zoom: (selectedConstruct?.latitude && selectedConstruct?.longitude) ? 15 : 12
       });
 
       this.mapgl = mapgl;
 
-      // Ждем полной загрузки карты
       this.map.on('load', () => {
-        if (this.marker) {
-          this.addMarker(this.marker);
+        if (selectedConstruct?.latitude && selectedConstruct?.longitude) {
+          this.addMarker(selectedConstruct);
         }
       });
 
-      // Добавляем маркер сразу, если карта уже готова
+      // Устанавливаем первое значение после инициализации карты
       setTimeout(() => {
-        if (this.marker && this.map) {
-          this.addMarker(this.marker);
+        const constructs = this.photoComponent.photo()?.constructMetadataResponses;
+        if (constructs && constructs.length > 0 && !this.mapControl.value) {
+          this.mapControl.setValue(constructs[0].id);
         }
-      }, 500);
+      }, 100);
 
     } catch (error) {
       console.error('Ошибка инициализации карты:', error);
     }
   }
 
+  private updateMarker() {
+    if (!this.map || !this.mapgl) return;
+
+    const selectedConstruct = this.selectedConstruct;
+    if (selectedConstruct?.latitude && selectedConstruct?.longitude) {
+      // Обновляем центр карты
+      this.map.setCenter([selectedConstruct.longitude, selectedConstruct.latitude]);
+      this.map.setZoom(15);
+
+      // Обновляем маркер
+      this.addMarker(selectedConstruct);
+    }
+  }
+
+  private addMarker(construct: ConstructMetadataResponse) {
+    try {
+      if (!construct.latitude || !construct.longitude) return;
+
+      // Удаляем старый маркер
+      if (this.currentMarker) {
+        this.currentMarker.destroy();
+        this.currentMarker = null;
+      }
+
+      // Создаем новый маркер
+      this.currentMarker = new this.mapgl.Marker(this.map, {
+        coordinates: [construct.longitude, construct.latitude]
+      });
+
+    } catch (error) {
+      console.error('Ошибка создания маркера:', error);
+    }
+  }
+
   private destroyMap() {
-    // Уничтожаем старую карту если она есть
     if (this.map) {
       this.map.destroy();
       this.map = null;
     }
-    // Удаляем все дочерние элементы из контейнера
+    if (this.currentMarker) {
+      this.currentMarker.destroy();
+      this.currentMarker = null;
+    }
     if (this.mapContainer?.nativeElement) {
       this.mapContainer.nativeElement.innerHTML = '';
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // console.log('Маркер изменен:', this.marker);
-
-    if (changes['marker'] && this.mapgl) {
-      // Пересоздаем карту полностью при изменении маркера
+    if (this.mapgl) {
       this.initializeMap();
-    }
-  }
-
-  private addMarker(markerData: { lat: number, lng: number, title?: string, id?: string }) {
-    try {
-      const markerId = markerData.id || 'default';
-      // console.log('Добавляем маркер:', markerData);
-
-      // Удаляем старый маркер если есть
-      if (this.currentMarker) {
-        this.currentMarker.destroy();
-        this.currentMarker = null;
-      }
-
-      // Создаем маркер
-      this.currentMarker = new this.mapgl.Marker(this.map, {
-        coordinates: [markerData.lng, markerData.lat]
-      });
-
-      // console.log(`Маркер ${markerId} создан успешно`);
-
-    } catch (error) {
-      console.error(`Ошибка создания маркера:`, error);
     }
   }
 

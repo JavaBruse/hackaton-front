@@ -229,3 +229,12 @@ main {
     display: none;
   }
 }
+
+
+@media (max-width: 1150px) {
+  .header-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: 10px;
+  }
+}

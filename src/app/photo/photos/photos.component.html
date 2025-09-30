@@ -41,27 +41,12 @@
                             <div class="photo-section">
                                 <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
                                     style="max-width: 100%; height: auto;">
-                                <div class="current-marker-info">
-                                    <p>Текущая метка: <strong>широта: {{ selectedMapMarker.lat }}, долгота:
-                                            {{selectedMapMarker.lng}}</strong></p>
-                                </div>
-                                <app-map-2gis [marker]="selectedMapMarker">
-                                </app-map-2gis>
-                                <div class="map-controls">
-                                    <mat-button-toggle-group appearance="legacy" [formControl]="mapControl"
-                                        aria-label="Выбор метки на карте">
-                                        @for (construct of allConstructs(); track construct.id) {
-                                        <mat-button-toggle [value]="construct.id">
-                                            <mat-icon>location_on</mat-icon>
-                                            Сооружение: {{ construct.position }}
-                                        </mat-button-toggle>
-                                        }
-                                    </mat-button-toggle-group>
-                                </div>
-
+                                <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-image"
+                                    style="max-width: 100%; height: auto;">
                             </div>
 
                             <!-- Параметры справа -->
+                            @if (false) {
                             <div class="parameters-section">
                                 <h3>Основные параметры</h3>
                                 <p><strong>Всего фото: </strong>{{phtotService.photos().length}} </p>
@@ -70,21 +55,17 @@
                                 <p><strong>Хэш файла:</strong> {{photo.fileHash}}</p>
                                 <p><strong>Тип контента:</strong> {{photo.contentType}}</p>
                                 <p><strong>Обновлено:</strong> {{photo.updatedAt | date}}</p>
-
-                                <!-- Метаданные камеры -->
                                 @if(photo.camMetadataResponse){
                                 <div class="metadata-section">
                                     <h4>Метаданные камеры</h4>
-                                    <p><strong>ID камеры:</strong> {{photo.camMetadataResponse.id}}</p>
-                                    <p><strong>Адрес:</strong> {{photo.camMetadataResponse.address}}</p>
-                                    <p><strong>Широта:</strong> {{photo.camMetadataResponse.latitude}}</p>
-                                    <p><strong>Долгота:</strong> {{photo.camMetadataResponse.longitude}}</p>
-                                    <p><strong>Азимут:</strong> {{photo.camMetadataResponse.bearing}}</p>
-                                    <p><strong>Высота:</strong> {{photo.camMetadataResponse.elevation}}</p>
+                                    <p><strong>ID камеры:</strong> {{photo.camMetadataResponse?.id}}</p>
+                                    <p><strong>Адрес:</strong> {{photo.camMetadataResponse?.address}}</p>
+                                    <p><strong>Широта:</strong> {{photo.camMetadataResponse?.latitude}}</p>
+                                    <p><strong>Долгота:</strong> {{photo.camMetadataResponse?.longitude}}</p>
+                                    <p><strong>Азимут:</strong> {{photo.camMetadataResponse?.bearing}}</p>
+                                    <p><strong>Высота:</strong> {{photo.camMetadataResponse?.elevation}}</p>
                                 </div>
                                 }
-
-                                <!-- Метаданные конструкций -->
                                 @if(photo.constructMetadataResponses){
                                 <div class="metadata-section">
                                     @for (construct of photo.constructMetadataResponses; track construct.id) {
@@ -98,18 +79,24 @@
                                     </div>
                                     }
                                 </div>
-
                                 }
-
                             </div>
+                            }
+
                         </div>
                     </mat-card-content>
                 </div>
                 <div class="card-side">
                     <button matButton="elevated" (click)="openDialog('0ms', '0ms', photo.id)">Удалить</button>
+                    <button matButton="elevated" (click)="openMapOverlay(photo)">Показать карту</button>
                 </div>
             </div>
         </mat-card>
         }
     </div>
 </div>
+@if (isViewMap()) {
+<div class="overlay" #overlay (click)="closeOverlay($event)">
+    <app-map-2gis class="overide-form"></app-map-2gis>
+</div>
+}

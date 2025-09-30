@@ -2,3 +2,27 @@
     width: 100%;
     height: 400px;
 }
+
+.photo-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.map-controls {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.map-controls mat-button-toggle-group {
+    width: 100%;
+}
+
+.map-controls mat-button-toggle {
+    flex: 1;
+}
+
+.card-side {
+    margin-right: 30px;
+}

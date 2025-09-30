@@ -1,1 +1,40 @@
-<div #mapContainer class="map-container"></div>
+<mat-card class="card-style">
+    <div class="card-layout">
+        <mat-card-content class="description">
+            <div class="photo-section">
+                <img [src]="photoComponent.photo()?.filePathOriginal" [alt]="photoComponent.photo()?.name"
+                    class="photo-image" style="max-width: 100%; height: auto;">
+            </div>
+            <div class="current-marker-info">
+                <p>Текущая метка:
+                    @if(selectedConstruct){
+                    широта: {{ selectedConstruct?.latitude }}, долгота: {{ selectedConstruct?.longitude }}
+                    } @else {
+                    Нет доступных меток
+                    }
+                </p>
+                <p>
+                    Адрес: {{selectedConstruct?.address}}
+                </p>
+            </div>
+
+            <div #mapContainer class="map-container"></div>
+        </mat-card-content>
+
+
+        <div class="card-side">
+            <div></div>
+            <mat-button-toggle-group [formControl]="mapControl" aria-label="Выбор метки на карте" vertical>
+                @for (construct of photoComponent.photo()?.constructMetadataResponses; track construct.id) {
+                <mat-button-toggle [value]="construct.id" [disabled]="!construct.latitude || !construct.longitude">
+                    <mat-icon>location_on</mat-icon>
+                    Сооружение: {{ construct.position || 'Без позиции' }}
+                </mat-button-toggle>
+                }
+            </mat-button-toggle-group>
+            <div></div>
+
+        </div>
+    </div>
+
+</mat-card>

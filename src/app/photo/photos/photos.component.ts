@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, computed, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, computed, Component, effect, inject, signal, Signal, ViewChild, ElementRef } from '@angular/core';
 import { ErrorMessageService } from '../../services/error-message.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -57,34 +57,21 @@ export class PhotosComponent {
   idTask!: string;
   readonly dialog = inject(MatDialog);
   entityes = signal<PhotoResponse[]>([]);
+  private readonly photoSignal = signal<PhotoResponse | null>(null);
+  readonly photo = this.photoSignal.asReadonly();
+  isViewMap = signal(false);
+  @ViewChild('overlay') overlay!: ElementRef;
 
-  mapControl = new FormControl('1');
-
-  allConstructs = computed(() => {
-    const constructs = this.filteredValues().flatMap(photo =>
-      photo.constructMetadataResponses.map(construct => ({
-        id: construct.id,
-        lat: construct.latitude || 0,
-        lng: construct.longitude || 0,
-        position: construct.position,
-        title: construct.address || `адрес не определен`,
-        type: construct.type || 'unknown',
-        photoId: photo.id
-      })).filter(construct => construct.lat !== 0 && construct.lng !== 0)
-    );
-
-    return constructs;
-  });
-
-  get selectedMapMarker() {
-    const constructs = this.allConstructs();
-    if (constructs.length === 0) {
-      return { lat: 55.755826, lng: 37.617494, title: 'Москва', id: 'default' };
+  closeOverlay(event: MouseEvent) {
+    // Проверяем, что клик был именно по overlay (а не по его дочерним элементам)
+    if (event.target === this.overlay.nativeElement) {
+      this.isViewMap.set(false);
     }
-    const selectedId = this.mapControl.value;
-    const selectedConstruct = constructs.find(c => c.id === selectedId);
+  }
 
-    return selectedConstruct || constructs[0];
+  openMapOverlay(photo: PhotoResponse) {
+    this.photoSignal.set(photo);
+    this.isViewMap.set(true);
   }
 
   range = new FormGroup({
@@ -188,12 +175,6 @@ export class PhotosComponent {
         this.phtotService.loadAll();
       }
     });
-
-    // СЛЕДИМ ЗА ИЗМЕНЕНИЯМИ СЕЛЕКТА КАРТЫ
-    // this.mapControl.valueChanges.subscribe(value => {
-    //   console.log('Селект карты изменен:', value);
-    //   console.log('selectedMapMarker:', this.selectedMapMarker);
-    // });
   }
 
   ngOnInit() {
