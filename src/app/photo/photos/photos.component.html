@@ -39,10 +39,11 @@
                         <div class="photo-container">
                             <!-- Фото слева -->
                             <div class="photo-section">
-                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
-                                    style="max-width: 100%; height: auto;">
-                                <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-image"
-                                    style="max-width: 100%; height: auto;">
+                                @if (photo.status==='COMPLETED') {
+                                <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-image">
+                                } @else{
+                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image">
+                                }
                             </div>
 
                             <!-- Параметры справа -->
@@ -87,8 +88,10 @@
                     </mat-card-content>
                 </div>
                 <div class="card-side">
-                    <button matButton="elevated" (click)="openDialog('0ms', '0ms', photo.id)">Удалить</button>
-                    <button matButton="elevated" (click)="openMapOverlay(photo)">Показать карту</button>
+                    <button matButton="elevated" (click)="openDialog('0ms', '0ms', photo.id)"
+                        [disabled]="photo.status ==='IN_PROGRESS'">Удалить</button>
+                    <button matButton="elevated" (click)="openMapOverlay(photo)"
+                        [disabled]="photo.status!='COMPLETED'">Показать карту</button>
                 </div>
             </div>
         </mat-card>

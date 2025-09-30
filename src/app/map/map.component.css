@@ -1,16 +1,17 @@
 .map-container {
     width: 100%;
-    height: 400px;
+    height: 500px;
 }
 
 .photo-image {
-    max-width: 100%;
+    width: 100%;
+    /* max-width: 1000px; */
     height: auto;
     display: block;
 }
 
 .map-controls {
-    display: flex;
+    /* display: flex; */
     justify-content: center;
     width: 100%;
 }
@@ -23,6 +24,50 @@
     flex: 1;
 }
 
-.card-side {
-    margin-right: 30px;
+.card-grid {
+    display: flex;
+    flex-direction: column;
+    /* gap: 16px; */
+}
+
+.first-row {
+    display: flex;
+    align-items: flex-start;
+}
+
+.photo-section {
+    flex: 1;
+}
+
+.current-marker-info {
+    width: 100%;
+    padding: 12px;
+}
+
+.current-marker-info p {
+    margin: 4px 0;
+}
+
+.third-row {
+    width: 100%;
+}
+
+.second-row {
+    padding: 5px;
+    border: 1px;
+    border-color: black;
+    border-style: dotted;
+}
+
+.center-horisontal {
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .card-grid {
+        display: block;
+        flex-direction: column;
+        /* gap: 16px; */
+    }
 }

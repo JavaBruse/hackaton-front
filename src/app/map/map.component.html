@@ -1,40 +1,36 @@
 <mat-card class="card-style">
-    <div class="card-layout">
-        <mat-card-content class="description">
+    <div class="card-grid">
+        <div class="first-row">
             <div class="photo-section">
                 <img [src]="photoComponent.photo()?.filePathOriginal" [alt]="photoComponent.photo()?.name"
-                    class="photo-image" style="max-width: 100%; height: auto;">
+                    class="photo-image">
+            </div>
+        </div>
+        <div class="second-row">
+            <div class="center-horisontal">
+                <mat-button-toggle-group [formControl]="mapControl" aria-label="Выбор метки на карте">
+                    @for (construct of photoComponent.photo()?.constructMetadataResponses; track construct.id) {
+                    <mat-button-toggle [value]="construct.id" [disabled]="!construct.latitude || !construct.longitude">
+                        <mat-icon>location_on</mat-icon>
+                        {{ construct.position || 'Без позиции' }}
+                    </mat-button-toggle>
+                    }
+                </mat-button-toggle-group>
             </div>
             <div class="current-marker-info">
-                <p>Текущая метка:
+                <p>
                     @if(selectedConstruct){
-                    широта: {{ selectedConstruct?.latitude }}, долгота: {{ selectedConstruct?.longitude }}
+                    <b>широта: </b> {{ selectedConstruct?.latitude }} <b>долгота: </b> {{ selectedConstruct?.longitude
+                    }}
                     } @else {
                     Нет доступных меток
                     }
                 </p>
-                <p>
-                    Адрес: {{selectedConstruct?.address}}
-                </p>
+                <p><b>Адрес:</b> {{selectedConstruct?.address}}</p>
             </div>
-
+        </div>
+        <div class="third-row">
             <div #mapContainer class="map-container"></div>
-        </mat-card-content>
-
-
-        <div class="card-side">
-            <div></div>
-            <mat-button-toggle-group [formControl]="mapControl" aria-label="Выбор метки на карте" vertical>
-                @for (construct of photoComponent.photo()?.constructMetadataResponses; track construct.id) {
-                <mat-button-toggle [value]="construct.id" [disabled]="!construct.latitude || !construct.longitude">
-                    <mat-icon>location_on</mat-icon>
-                    Сооружение: {{ construct.position || 'Без позиции' }}
-                </mat-button-toggle>
-                }
-            </mat-button-toggle-group>
-            <div></div>
-
         </div>
     </div>
-
 </mat-card>

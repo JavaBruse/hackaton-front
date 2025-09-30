@@ -41,11 +41,14 @@
                     </mat-card-content>
                 </div>
                 <div class="card-side">
-                    <button matButton="elevated" (click)="openDialogTask('0ms', '0ms', task.id)">Запустить
+                    <button matButton="elevated" (click)="openDialogTask('0ms', '0ms', task.id)"
+                        [disabled]="task.status!='TASK_NEW'">Запустить
                         анализ!</button>
-                    <button matButton="elevated" routerLink="/upload/{{ task.id }}">Загрузить фотографии</button>
+                    <button matButton="elevated" routerLink="/upload/{{ task.id }}"
+                        [disabled]="task.status !='TASK_NEW'">Загрузить фотографии</button>
                     <button matButton="elevated" routerLink="/all-photo/{{ task.id }}">Фотографии</button>
-                    <button matButton="elevated" (click)="openDialog('0ms', '0ms', task.id)">Удалить</button>
+                    <button matButton="elevated" (click)="openDialog('0ms', '0ms', task.id)"
+                        [disabled]="task.status=='IN_PROGRESS'">Удалить</button>
                 </div>
             </div>
 
