@@ -153,7 +153,7 @@ export class TasksComponent {
 
   getReport(id: string) {
     if (id) {
-
+      this.taskService.reportXLSX(id);
     }
   }
 }

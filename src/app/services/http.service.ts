@@ -23,4 +23,11 @@ export class HttpService {
     delete<T>(url: string, headers?: HttpHeaders): Observable<T> {
         return this.http.delete<T>(url, { headers });
     }
+
+    getBlob(url: string, headers?: HttpHeaders): Observable<Blob> {
+        return this.http.get(url, {
+            headers,
+            responseType: 'blob'
+        });
+    }
 }

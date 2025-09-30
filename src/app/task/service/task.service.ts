@@ -31,6 +31,20 @@ export class TaskService {
         });
     }
 
+    reportXLSX(taskId: string) {
+        this.http.getBlob(`${this.url}main/v1/report/XLSX/${taskId}`).subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `report_${taskId}.xlsx`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            },
+            error: () => console.error('Ошибка загрузки отчета')
+        });
+    }
+
     add(task: TaskRquests) {
         this.http.post<TaskResponse[]>(`${this.apiUrl}/add`, task).subscribe({
             next: (tasks) => this.tasksSignal.set(tasks),
