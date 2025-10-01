@@ -31,20 +31,17 @@
         @for (photo of filteredValues(); track photo.id) {
         <mat-card tabindex="0" class="card-style">
             <div class="card-layout">
+                <div class="card-side">
+                    @if(photo.status==='TASK_NEW'){
+                    <mat-icon class="icon-menu">fiber_new</mat-icon>
+                    } @else if (photo.status==='IN_PROGRESS') {
+                    <mat-icon class="icon-menu">autorenew</mat-icon>
+                    } @else {
+                    <mat-icon class="icon-menu">flag</mat-icon>
+                    }
+                </div>
                 <div class="card-main">
-                    <mat-card-header>
-                        <div class="card-side">
-                            @if(photo.status==='TASK_NEW'){
-                            <mat-icon class="icon-menu">fiber_new</mat-icon>
-                            } @else if (photo.status==='IN_PROGRESS') {
-                            <mat-icon class="icon-menu">autorenew</mat-icon>
-                            } @else {
-                            <mat-icon class="icon-menu">flag</mat-icon>
-                            }
-                        </div>
-                    </mat-card-header>
                     <mat-card-content class="description">
-
                         <div class="photo-container">
                             <!-- Фото слева -->
                             <div class="photo-section">
@@ -55,6 +52,10 @@
                                 <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
                                     loading="lazy">
                                 }
+                                <div class="text">
+                                    <div>Ш: {{photo.camMetadataResponse?.latitude}}</div>
+                                    <div>Д: {{photo.camMetadataResponse?.longitude}}</div>
+                                </div>
                             </div>
 
                             <!-- Параметры справа -->
@@ -105,6 +106,8 @@
                         [disabled]="photo.status!='COMPLETED'">Показать карту</button>
                 </div>
             </div>
+
+
         </mat-card>
         }
     </div>

@@ -55,3 +55,15 @@ svg {
     /* padding-right: 20px; */
     pointer-events: auto;
 }
+
+.text {
+    position: absolute;
+    left: 40px;
+    bottom: 6px;
+    background: rgba(255, 255, 255, 0.336);
+    color: rgb(0, 0, 0);
+    /* padding: 4px 8px; */
+    font-size: 12px;
+    font-size: 10px;
+    /* border-radius: 2px; */
+}
