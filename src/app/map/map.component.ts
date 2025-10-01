@@ -54,6 +54,28 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       return null;
     }
 
+    const camData = this.photoComponent.photo()?.camMetadataResponse;
+    if (camData) {
+      // Ищем существующий элемент с position 0
+      const existingCamData = constructs.find(c => c.position === 0);
+
+      if (existingCamData) {
+        // Обновляем существующий
+        existingCamData.latitude = camData.latitude;
+        existingCamData.longitude = camData.longitude;
+        existingCamData.address = camData.address;
+      } else {
+        // Добавляем новый только если нет position 0
+        constructs.unshift({
+          id: '',
+          position: 0,
+          latitude: camData.latitude,
+          longitude: camData.longitude,
+          address: camData.address
+        });
+      }
+    }
+
     const selectedId = this.mapControl.value;
     if (selectedId) {
       return constructs.find(c => c.id === selectedId) || constructs[0];
@@ -64,7 +86,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngAfterViewInit() {
     console.log(this.photoComponent.photo());
-
     this.loadMapScript();
   }
 

@@ -24,7 +24,11 @@
                     @for (construct of photoComponent.photo()?.constructMetadataResponses; track construct.id) {
                     <mat-button-toggle [value]="construct.id" [disabled]="!construct.latitude || !construct.longitude">
                         <mat-icon>location_on</mat-icon>
+                        @if(construct.position===0){
+                        Камера
+                        }@else{
                         {{ construct.position || 'Без позиции' }}
+                        }
                     </mat-button-toggle>
                     }
                 </mat-button-toggle-group>
