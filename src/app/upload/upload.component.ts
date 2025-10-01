@@ -19,7 +19,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PhotoRequest } from '../photo/service/photo-request';
 import { FormsModule } from '@angular/forms';
-import EXIF from 'exif-js';
+import exifr from 'exifr';
 
 interface UploadFile {
   file: File;
@@ -94,8 +94,8 @@ export class UploadComponent {
     this.addFiles(event.dataTransfer.files);
   }
 
-  addFiles(fileList: FileList): void {
-    Array.from(fileList).forEach(file => {
+  async addFiles(fileList: FileList): Promise<void> {
+    for (const file of Array.from(fileList)) {
       const isImage = file.type.startsWith('image/');
       const uploadFile: UploadFile = {
         file,
@@ -109,35 +109,43 @@ export class UploadComponent {
 
       if (isImage) {
         const reader = new FileReader();
-        reader.onload = e => {
-          uploadFile.preview = e.target?.result as string;
-          // Читаем EXIF данные после загрузки preview
-          this.readExifData(file, uploadFile);
-        };
+        reader.onload = e => uploadFile.preview = e.target?.result as string;
         reader.readAsDataURL(file);
+        await this.readExifData(file, uploadFile);
       }
 
       this.files.push(uploadFile);
-    });
+    }
   }
 
-  private readExifData(file: File, uploadFile: UploadFile): void {
-    // Используем любую EXIF библиотеку, например exif-js
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const exif = EXIF.readFromBinaryFile(e.target.result);
-      if (exif.GPSLatitude && exif.GPSLongitude) {
-        // Конвертируем EXIF координаты в десятичные
-        uploadFile.latitude = this.convertExifGps(exif.GPSLatitude, exif.GPSLatitudeRef);
-        uploadFile.longitude = this.convertExifGps(exif.GPSLongitude, exif.GPSLongitudeRef);
+  private async readExifData(file: File, uploadFile: UploadFile): Promise<void> {
+    try {
+      const exif = await exifr.parse(file);
+      console.log('EXIF data:', exif);
+
+      if (exif?.latitude && exif?.longitude) {
+        // exifr уже конвертирует в десятичные градусы
+        uploadFile.latitude = exif.latitude;
+        uploadFile.longitude = exif.longitude;
+      } else if (exif?.GPSLatitude && exif?.GPSLongitude) {
+        uploadFile.latitude = exif.GPSLatitude;
+        uploadFile.longitude = exif.GPSLongitude;
       }
-    };
-    reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.log('EXIF read error:', error);
+    }
   }
 
-  private convertExifGps(coords: number[], ref: string): number {
-    const decimal = coords[0] + coords[1] / 60 + coords[2] / 3600;
-    return (ref === 'S' || ref === 'W') ? -decimal : decimal;
+  private convertExifGps(coords: any, ref: string): number {
+    // coords может быть массивом [deg, min, sec] или строкой
+    if (Array.isArray(coords)) {
+      const deg = coords[0];
+      const min = coords[1];
+      const sec = coords[2];
+      const decimal = deg + min / 60 + sec / 3600;
+      return (ref === 'S' || ref === 'W') ? -decimal : decimal;
+    }
+    return 0;
   }
 
   allowDrop(event: DragEvent): void {
