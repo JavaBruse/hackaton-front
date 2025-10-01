@@ -1,4 +1,3 @@
-// src/app/upload/upload.component.ts
 import { Component, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
@@ -19,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PhotoRequest } from '../photo/service/photo-request';
+import { FormsModule } from '@angular/forms';
 
 interface UploadFile {
   file: File;
@@ -27,6 +27,8 @@ interface UploadFile {
   progress: number;
   uploaded: boolean;
   error?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 @Component({
@@ -47,7 +49,8 @@ interface UploadFile {
     MatButtonModule,
     MatCheckboxModule,
     MatFormFieldModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.css']
@@ -62,7 +65,6 @@ export class UploadComponent {
   dragOver = false;
   previewImage: string | null = null;
   id!: string;
-  private fb = inject(FormBuilder);
 
   constructor(private route: ActivatedRoute) { }
 
@@ -72,23 +74,15 @@ export class UploadComponent {
     });
   }
 
-  form: FormGroup = this.fb.group({
-    latitude: new FormControl<number | null>(null),
-    longitude: new FormControl<number | null>(null)
-  });
-
-  // счётчик завершённых (успешных) загрузок
   private _uploadedCount = 0;
   get uploadedCount(): number { return this._uploadedCount; }
 
-  // Параллелизм 
   concurrency = 4;
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
     this.addFiles(input.files);
-    // сбрасываем input для повторного выбора того же файла (опционально)
     input.value = '';
   }
 
@@ -107,7 +101,9 @@ export class UploadComponent {
         isImage,
         progress: 0,
         uploaded: false,
-        error: null
+        error: null,
+        latitude: null,
+        longitude: null
       };
 
       if (isImage) {
@@ -134,7 +130,6 @@ export class UploadComponent {
   }
 
   removeFile(index: number): void {
-    // не даём удалять файл, если идёт загрузка (по желанию можно разрешить)
     if (this.uploading) return;
     this.files.splice(index, 1);
   }
@@ -145,7 +140,6 @@ export class UploadComponent {
 
   closePreview(): void { this.previewImage = null; }
 
-  // === главная логика: параллельная загрузка с лимитом concurrency ===
   async onUpload(): Promise<void> {
     if (this.files.length === 0) return;
     this.uploading = true;
@@ -157,7 +151,6 @@ export class UploadComponent {
     } catch (err) {
       console.error('Error during uploads', err);
     } finally {
-      // очищаем список только от успешно загруженных
       this.files = this.files.filter(f => !f.uploaded);
       this.uploading = false;
     }
@@ -173,7 +166,6 @@ export class UploadComponent {
         if (i >= total) break;
         const file = this.files[i];
         await this.uploadSingle(file).catch(e => {
-          // уже обработано внутри uploadSingle — просто лог
           console.error('uploadSingle error', e);
         });
       }
@@ -187,19 +179,16 @@ export class UploadComponent {
 
   private async uploadSingle(uploadFile: UploadFile): Promise<void> {
     try {
-      // 1) запрос presigned
       const photoRequest: PhotoRequest = {
         name: uploadFile.file.name,
         taskId: this.id,
-        latitude: this.form.value.latitude || null,
-        longitude: this.form.value.langitude || null,
+        latitude: uploadFile.latitude || null,
+        longitude: uploadFile.longitude || null,
         contentType: uploadFile.file.type,
         fileSize: uploadFile.file.size
       };
-      console.log(photoRequest);
       const response = await firstValueFrom(this.uploadService.initiateUpload(photoRequest));
 
-      // 2) загрузка через XHR с прогрессом
       await this.uploadService.uploadToS3WithProgress(response.uploadUrl, uploadFile.file, (percent) => {
         uploadFile.progress = percent;
       });

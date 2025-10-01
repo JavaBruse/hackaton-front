@@ -22,18 +22,16 @@
                         <div class="size">{{ formatSize(f.file.size) }}</div>
                     </div>
                     <div class="card-main">
-                        <mat-card-header>
-                            <div class="input-stile" [formGroup]="form">
-                                <mat-form-field>
-                                    <mat-label>Широта</mat-label>
-                                    <input matInput type="text" placeholder="55.7558" formControlName="latitude">
-                                </mat-form-field>
-                                <mat-form-field>
-                                    <mat-label>Долгота</mat-label>
-                                    <input matInput type="text" placeholder="37.6173" formControlName="longitude">
-                                </mat-form-field>
-                            </div>
-                        </mat-card-header>
+                        <div class="input-stile">
+                            <mat-form-field>
+                                <mat-label>Широта</mat-label>
+                                <input matInput type="number" placeholder="55.7558" [(ngModel)]="f.latitude">
+                            </mat-form-field>
+                            <mat-form-field>
+                                <mat-label>Долгота</mat-label>
+                                <input matInput type="number" placeholder="37.6173" [(ngModel)]="f.longitude">
+                            </mat-form-field>
+                        </div>
                         <mat-card-content class="description">
                             @if (f.isImage) {
                             <div class="file-row">
