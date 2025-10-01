@@ -25,6 +25,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MapComponent } from "../../map/map.component";
+import { TaskService } from '../../task/service/task.service';
 
 @Component({
   selector: 'app-photos',
@@ -52,6 +53,7 @@ import { MapComponent } from "../../map/map.component";
   providers: [provideNativeDateAdapter(), { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }],
 })
 export class PhotosComponent {
+  taskService = inject(TaskService);
   phtotService = inject(PhotoService);
   errorMessegeService = inject(ErrorMessageService);
   idTask!: string;
@@ -204,6 +206,8 @@ export class PhotosComponent {
   }
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string, photoId: string | null): void {
+    this.taskService.dialogTitle = "Удаление";
+    this.taskService.dialogDisk = "Действие не обратимо, Вы уверены?";
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '250px',
       enterAnimationDuration,

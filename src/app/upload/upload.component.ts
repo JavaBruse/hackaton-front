@@ -5,24 +5,50 @@ import { firstValueFrom } from 'rxjs';
 import { HttpService } from '../services/http.service';
 import { ErrorMessageService } from '../services/error-message.service';
 import { environment } from '../../environments/environment';
-import { UploadService, PhotoRequest } from './upload.service';
+import { UploadService } from './upload.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { PhotoRequest } from '../photo/service/photo-request';
 
 interface UploadFile {
   file: File;
   preview?: string;
   isImage: boolean;
-  progress: number;    // 0..100 (инициализирован)
-  uploaded: boolean;   // true если успешно
+  progress: number;
+  uploaded: boolean;
   error?: string | null;
 }
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule],
+  imports: [
+    MatIconModule,
+    MatButtonModule,
+    MatCardModule,
+    MatChipsModule,
+    MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatBadgeModule,
+    MatButtonToggleModule,
+    MatMenuModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatFormFieldModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.css']
 })
@@ -36,22 +62,26 @@ export class UploadComponent {
   dragOver = false;
   previewImage: string | null = null;
   id!: string;
+  private fb = inject(FormBuilder);
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id')!;
-      // this.postService.loadAll(this.id);
     });
   }
 
+  form: FormGroup = this.fb.group({
+    latitude: new FormControl<number | null>(null),
+    longitude: new FormControl<number | null>(null)
+  });
 
   // счётчик завершённых (успешных) загрузок
   private _uploadedCount = 0;
   get uploadedCount(): number { return this._uploadedCount; }
 
-  // Параллелизм (можешь менять)
+  // Параллелизм 
   concurrency = 4;
 
   onFileSelected(event: Event): void {
@@ -161,10 +191,12 @@ export class UploadComponent {
       const photoRequest: PhotoRequest = {
         name: uploadFile.file.name,
         taskId: this.id,
+        latitude: this.form.value.latitude || null,
+        longitude: this.form.value.langitude || null,
         contentType: uploadFile.file.type,
         fileSize: uploadFile.file.size
       };
-
+      console.log(photoRequest);
       const response = await firstValueFrom(this.uploadService.initiateUpload(photoRequest));
 
       // 2) загрузка через XHR с прогрессом

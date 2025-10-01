@@ -5,13 +5,33 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PhotosComponent } from '../photo/photos/photos.component';
 import { ConstructMetadataResponse } from '../photo/service/photo-response';
 import { MatCardModule } from '@angular/material/card';
-
+import { MatButtonModule } from '@angular/material/button';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-map-2gis',
   templateUrl: './map.component.html',
   styleUrl: './map.component.css',
-  imports: [MatButtonToggleModule, MatIconModule, ReactiveFormsModule, MatCardModule]
+  imports: [
+    MatButtonToggleModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatChipsModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatBadgeModule,
+    MatMenuModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatCheckboxModule
+  ]
 })
 export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('mapContainer') mapContainer!: ElementRef;

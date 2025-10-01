@@ -32,7 +32,6 @@
         <mat-card tabindex="0" class="card-style">
             <div class="card-layout">
                 <div class="card-main">
-
                     <mat-card-header>
                         <div class="card-side">
                             @if(photo.status==='TASK_NEW'){
@@ -50,9 +49,11 @@
                             <!-- Фото слева -->
                             <div class="photo-section">
                                 @if (photo.status==='COMPLETED') {
-                                <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-image">
+                                <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-image"
+                                    loading="lazy">
                                 } @else{
-                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image">
+                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
+                                    loading="lazy">
                                 }
                             </div>
 

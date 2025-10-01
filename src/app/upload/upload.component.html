@@ -13,43 +13,63 @@
     }
     <!-- список файлов -->
     @if (files.length > 0) {
-    <h3>Файлы:</h3>
     <ul>
-        @for (f of files; track f.file.name; let i = $index) {
-        <li class="file-item">
-            @if (f.isImage) {
-            <div class="file-row">
-                <img [src]="f.preview" alt="preview" class="thumb" />
-                <span class="file-info">
-                    <strong>{{ f.file.name }}</strong>
-                    <div class="size">{{ formatSize(f.file.size) }}</div>
-                </span>
-                <button matButton="elevated" (click)="showPreview(f)">Просмотр</button>
-                <button matButton="elevated" (click)="removeFile(i)">Удалить</button>
-            </div>
-            } @else {
-            <div class="file-row">
-                <span class="file-info">📦 <strong>{{ f.file.name }}</strong>
-                    <div class="size">{{ formatSize(f.file.size) }}</div>
-                </span>
-                <button matButton="elevated" (click)="removeFile(i)">Удалить</button>
-            </div>
-            }
+        <div class="cards-grid">
+            @for (f of files; track f.file.name; let i = $index) {
+            <mat-card tabindex="0" class="card-style">
+                <div class="card-layout">
+                    <div class="card-side">
+                        <div class="size">{{ formatSize(f.file.size) }}</div>
+                    </div>
+                    <div class="card-main">
+                        <mat-card-header>
+                            <div class="input-stile" [formGroup]="form">
+                                <mat-form-field>
+                                    <mat-label>Широта</mat-label>
+                                    <input matInput type="text" placeholder="55.7558" formControlName="latitude">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Долгота</mat-label>
+                                    <input matInput type="text" placeholder="37.6173" formControlName="longitude">
+                                </mat-form-field>
+                            </div>
+                        </mat-card-header>
+                        <mat-card-content class="description">
+                            @if (f.isImage) {
+                            <div class="file-row">
+                                <img [src]="f.preview" alt="preview" class="thumb" />
+                                <span class="file-info">
+                                    <strong>{{ f.file.name }}</strong>
+                                </span>
+                            </div>
+                            }
 
-            <!-- прогресс под файлом -->
-            <div class="progress-row">
-                <div class="progress-bar">
-                    <div class="progress" [style.width.%]="f.progress"></div>
+
+                            <!-- прогресс под файлом -->
+                            <div class="progress-row">
+                                <div class="progress-bar">
+                                    <div class="progress" [style.width.%]="f.progress"></div>
+                                </div>
+                                <div class="percent">{{ f.progress }}%</div>
+                            </div>
+
+                            <!-- ошибка если есть -->
+                            @if (f.error) {
+                            <div class="upload-error">Ошибка: {{ f.error }}</div>
+                            }
+                        </mat-card-content>
+
+
+                    </div>
+                    <div class="card-side">
+                        <button matButton="elevated" (click)="showPreview(f)">Просмотр</button>
+                        <button matButton="elevated" (click)="removeFile(i)">Удалить</button>
+                    </div>
+
                 </div>
-                <div class="percent">{{ f.progress }}%</div>
-            </div>
-
-            <!-- ошибка если есть -->
-            @if (f.error) {
-            <div class="upload-error">Ошибка: {{ f.error }}</div>
+            </mat-card>
             }
-        </li>
-        }
+        </div>
     </ul>
     }
 
@@ -60,7 +80,7 @@
     </div>
     }
 
-    <!-- затемнение прогресса загрузки (без крутящегося круга) -->
+    <!-- затемнение прогресса загрузки  -->
     @if (uploading) {
     <div class="overlay">
         <div class="progress-counter">

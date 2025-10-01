@@ -52,5 +52,6 @@ svg {
 }
 
 .overlay>* {
+    /* padding-right: 20px; */
     pointer-events: auto;
 }

@@ -7,8 +7,20 @@
             </div>
         </div>
         <div class="second-row">
-            <div class="center-horisontal">
-                <mat-button-toggle-group [formControl]="mapControl" aria-label="Выбор метки на карте">
+            <div class="current-marker-info">
+                <div class="coordinates-row">
+                    <mat-form-field class="latitude-field">
+                        <mat-label>Широта</mat-label>
+                        <input disabled="true" matInput type="text" [value]="selectedConstruct?.latitude">
+                    </mat-form-field>
+                    <mat-form-field class="longitude-field">
+                        <mat-label>Долгота</mat-label>
+                        <input disabled="true" matInput type="text" [value]="selectedConstruct?.longitude">
+                    </mat-form-field>
+                </div>
+
+                <mat-button-toggle-group appearance="legacy" [formControl]="mapControl"
+                    aria-label="Выбор метки на карте">
                     @for (construct of photoComponent.photo()?.constructMetadataResponses; track construct.id) {
                     <mat-button-toggle [value]="construct.id" [disabled]="!construct.latitude || !construct.longitude">
                         <mat-icon>location_on</mat-icon>
@@ -16,18 +28,13 @@
                     </mat-button-toggle>
                     }
                 </mat-button-toggle-group>
+
+                <mat-form-field class="address-field">
+                    <mat-label>Адрес</mat-label>
+                    <input disabled="true" matInput type="text" [value]="selectedConstruct?.address">
+                </mat-form-field>
             </div>
-            <div class="current-marker-info">
-                <p>
-                    @if(selectedConstruct){
-                    <b>широта: </b> {{ selectedConstruct.latitude }} <b>долгота: </b> {{ selectedConstruct.longitude
-                    }}
-                    } @else {
-                    Нет доступных меток
-                    }
-                </p>
-                <p><b>Адрес:</b> {{selectedConstruct?.address}}</p>
-            </div>
+
         </div>
         <div class="third-row">
             <div #mapContainer class="map-container"></div>

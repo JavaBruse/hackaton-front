@@ -5,4 +5,6 @@ export interface PhotoRequest {
     id?: string;
     taskId: string;
     filePath?: string;
+    latitude?: number | null;
+    longitude?: number | null;
 }

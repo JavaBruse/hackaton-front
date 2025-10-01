@@ -3,15 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService } from '../services/http.service';
 import { environment } from '../../environments/environment';
-
-export interface PhotoRequest {
-    name: string;
-    contentType?: string;
-    fileSize?: number;
-    id?: string;
-    taskId: string;
-    filePath?: string;
-}
+import { PhotoRequest } from '../photo/service/photo-request';
 
 export interface PresignedUploadResponse {
     uploadUrl: string;

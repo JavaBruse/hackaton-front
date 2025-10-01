@@ -16,13 +16,46 @@
     width: 100%;
 }
 
-.map-controls mat-button-toggle-group {
+mat-button-toggle-group {
+    width: 100%;
+    gap: 0 !important;
+    /* Убираем промежутки */
+}
+
+mat-button-toggle {
+    width: 100%;
+    border-radius: 0 !important;
+    border: 1px solid #ccc !important;
+    margin-right: -1px !important;
+    /* Перекрываем границы */
+    margin-bottom: -1px !important;
+}
+
+.mat-button-toggle-button {
+    border-radius: 0 !important;
+}
+
+mat-form-field {
+    margin-bottom: -1.25em !important;
+}
+
+.current-marker-info {
+    display: flex;
+    flex-direction: column;
+    width: 10;
+    /* gap: 16px; */
+}
+
+.coordinates-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* gap: 16px; */
+}
+
+.address-field {
     width: 100%;
 }
 
-.map-controls mat-button-toggle {
-    flex: 1;
-}
 
 .card-grid {
     display: flex;
@@ -41,7 +74,7 @@
 
 .current-marker-info {
     width: 100%;
-    padding: 12px;
+    /* padding: 12px; */
 }
 
 .current-marker-info p {
@@ -53,7 +86,7 @@
 }
 
 .second-row {
-    padding: 5px;
+    /* padding: 5px; */
     border: 1px;
     border-color: black;
     border-style: dotted;
