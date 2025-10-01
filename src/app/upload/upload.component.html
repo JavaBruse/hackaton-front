@@ -26,12 +26,12 @@
                             <mat-form-field>
                                 <mat-label>Широта</mat-label>
                                 <input matInput type="number" placeholder="55.7558" [value]="f.latitude"
-                                    readonly="f.latitude">
+                                    [readonly]="!!f.latitude">
                             </mat-form-field>
                             <mat-form-field>
                                 <mat-label>Долгота</mat-label>
                                 <input matInput type="number" placeholder="37.6173" [value]="f.longitude"
-                                    readonly="f.longitude">
+                                    [readonly]="!!f.longitude">
                             </mat-form-field>
                         </div>
                         <mat-card-content class="description">
