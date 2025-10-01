@@ -19,6 +19,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PhotoRequest } from '../photo/service/photo-request';
 import { FormsModule } from '@angular/forms';
+import EXIF from 'exif-js';
 
 interface UploadFile {
   file: File;
@@ -108,12 +109,35 @@ export class UploadComponent {
 
       if (isImage) {
         const reader = new FileReader();
-        reader.onload = e => uploadFile.preview = e.target?.result as string;
+        reader.onload = e => {
+          uploadFile.preview = e.target?.result as string;
+          // Читаем EXIF данные после загрузки preview
+          this.readExifData(file, uploadFile);
+        };
         reader.readAsDataURL(file);
       }
 
       this.files.push(uploadFile);
     });
+  }
+
+  private readExifData(file: File, uploadFile: UploadFile): void {
+    // Используем любую EXIF библиотеку, например exif-js
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const exif = EXIF.readFromBinaryFile(e.target.result);
+      if (exif.GPSLatitude && exif.GPSLongitude) {
+        // Конвертируем EXIF координаты в десятичные
+        uploadFile.latitude = this.convertExifGps(exif.GPSLatitude, exif.GPSLatitudeRef);
+        uploadFile.longitude = this.convertExifGps(exif.GPSLongitude, exif.GPSLongitudeRef);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  private convertExifGps(coords: number[], ref: string): number {
+    const decimal = coords[0] + coords[1] / 60 + coords[2] / 3600;
+    return (ref === 'S' || ref === 'W') ? -decimal : decimal;
   }
 
   allowDrop(event: DragEvent): void {
