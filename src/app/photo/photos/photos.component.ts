@@ -128,9 +128,54 @@ export class PhotosComponent {
     }
 
     if (searchText) {
-      filtered = filtered.filter(f =>
-        f.name?.toLowerCase().includes(searchText)
-      );
+      filtered = filtered.filter(f => {
+        // Поиск по адресу в ConstructMetadataResponse
+        const hasAddressMatch = f.constructMetadataResponses.some(construct =>
+          construct.address?.toLowerCase().includes(searchText)
+        );
+        if (hasAddressMatch) {
+          return true;
+        }
+
+        const coordMatch = searchText.match(/^(-?\d+)\s*,\s*(-?\d+)$/);
+        if (coordMatch) {
+          const searchLatInt = parseInt(coordMatch[1]); // целая часть широты
+          const searchLngInt = parseInt(coordMatch[2]); // целая часть долготы
+
+          const hasCoordinateMatch = f.constructMetadataResponses.some(construct => {
+            if (construct.latitude && construct.longitude) {
+              // Берем целые части координат
+              const constructLatInt = Math.floor(construct.latitude);
+              const constructLngInt = Math.floor(construct.longitude);
+
+              // Сравниваем целые части
+              return constructLatInt === searchLatInt && constructLngInt === searchLngInt;
+            }
+            return false;
+          });
+
+          return hasCoordinateMatch;
+        }
+
+        // Если ввели одно целое число - ищем по любой координате
+        const singleNumberMatch = searchText.match(/^(-?\d+)$/);
+        if (singleNumberMatch) {
+          const searchInt = parseInt(singleNumberMatch[1]);
+
+          const hasNumberMatch = f.constructMetadataResponses.some(construct => {
+            if (construct.latitude && construct.longitude) {
+              const latInt = Math.floor(construct.latitude);
+              const lngInt = Math.floor(construct.longitude);
+              return latInt === searchInt || lngInt === searchInt;
+            }
+            return false;
+          });
+
+          return hasNumberMatch;
+        }
+
+        return false;
+      });
     }
 
     if (dateRange.start || dateRange.end) {
