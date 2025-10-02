@@ -45,9 +45,14 @@
                         <div class="photo-container">
                             <!-- Фото слева -->
                             <div class="photo-section">
-                                @if (photo.status==='COMPLETED') {
+                                @if (photo.status==='COMPLETED') {\
+                                @if (photo.filePathComplete) {
                                 <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-image"
                                     loading="lazy">
+                                }@else{
+                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
+                                    loading="lazy">
+                                }
                                 } @else{
                                 <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
                                     loading="lazy">

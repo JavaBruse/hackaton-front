@@ -2,8 +2,13 @@
     <div class="card-grid">
         <div class="first-row">
             <div class="photo-section">
+                @if (photoComponent.photo()?.filePathComplete) {
+                <img [src]="photoComponent.photo()?.filePathComplete" [alt]="photoComponent.photo()?.name"
+                    class="photo-image">
+                }@else {
                 <img [src]="photoComponent.photo()?.filePathOriginal" [alt]="photoComponent.photo()?.name"
                     class="photo-image">
+                }
             </div>
         </div>
         <div class="second-row">
