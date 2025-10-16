@@ -1,90 +1,15 @@
 <div class="map-container">
     <div id="map"></div>
 
-    <div class="topbar">
-        <button class="btn" [class.active]="currentMode === 'db'" (click)="onModeChange('db')">
-            DB view
+    <div class="map-controls">
+        <button matButton="elevated" (click)="switchView('coverage')" [class.active]="currentView === 'coverage'"
+            class="control-btn">
+            Области покрытия
         </button>
-        <button class="btn" [class.active]="currentMode === 'match'" (click)="onModeChange('match')">
-            Matching result
+
+        <button matButton="elevated" (click)="switchView('markers')" [class.active]="currentView === 'markers'"
+            class="control-btn">
+            Точечный вид
         </button>
-        <select class="btn" (change)="onBasemapChange($event)">
-            <option value="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png">OSM Standard</option>
-            <option value="https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png">CartoDB Positron
-            </option>
-            <option value="https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png">CartoDB DarkMatter
-            </option>
-            <option value="https://cartodb-basemaps-a.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png">CartoDB
-                Voyager</option>
-            <option value="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png">OpenTopoMap</option>
-        </select>
-    </div>
-
-    @if (currentMode === 'db') {
-    <div class="panel">
-        <h4>Layers</h4>
-        <label>
-            <input type="checkbox" [checked]="checkboxStates.q"
-                (change)="checkboxStates.q = !checkboxStates.q; onCheckboxChange('q')" />
-            show q (reference)
-        </label>
-        <label>
-            <input type="checkbox" [checked]="checkboxStates.qneg"
-                (change)="checkboxStates.qneg = !checkboxStates.qneg; onCheckboxChange('qneg')" />
-            show qneg (cross)
-        </label>
-        <label>
-            <input type="checkbox" [checked]="checkboxStates.db"
-                (change)="checkboxStates.db = !checkboxStates.db; onCheckboxChange('db')" />
-            show db (stars)
-        </label>
-        <label>
-            <input type="checkbox" [checked]="checkboxStates.heat"
-                (change)="checkboxStates.heat = !checkboxStates.heat; onCheckboxChange('heat')" />
-            show DB heatmap
-        </label>
-        <label>
-            <input type="checkbox" [checked]="showThumbnails"
-                (change)="showThumbnails = !showThumbnails; onThumbnailsChange()" />
-            thumbnails
-        </label>
-    </div>
-    }
-
-    @if (currentMode === 'match') {
-    <div class="panel">
-        <h4>Matching</h4>
-        <div>Click a <b>q</b> marker to show its top-3 matches.</div>
-        <label>
-            <input type="checkbox" [checked]="checkboxStates.unc"
-                (change)="checkboxStates.unc = !checkboxStates.unc; onCheckboxChange('unc')" />
-            draw per-query uncertainty
-        </label>
-    </div>
-    }
-
-    <div class="legend">
-        <div>
-            <span class="sym" style="background:none;">
-                <svg width="16" height="16" viewBox="-10 -10 20 20">
-                    <path d="M0,-9 L1.6,-1.6 L9,0 L1.6,1.6 L0,9 L-1.6,1.6 L-9,0 L-1.6,-1.6 Z" fill="#1f6feb"
-                        stroke="#0b3d91" stroke-width="1" />
-                </svg>
-            </span>
-            q (reference star)
-        </div>
-        <div>
-            <span class="sym icon-cross"></span>
-            qneg (cross)
-        </div>
-        <div>
-            <span class="sym" style="background:none;">
-                <svg width="16" height="16" viewBox="-10 -10 20 20">
-                    <path d="M0,-9 L1.6,-1.6 L9,0 L1.6,1.6 L0,9 L-1.6,1.6 L-9,0 L-1.6,-1.6 Z"
-                        fill="rgba(255,165,0,0.45)" stroke="#b36b00" stroke-width="1" />
-                </svg>
-            </span>
-            db (stored star)
-        </div>
     </div>
 </div>
