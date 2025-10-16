@@ -2,12 +2,14 @@
     <div id="map"></div>
 
     <div class="map-controls">
-        <button matButton="elevated" (click)="switchView('coverage')" [class.active]="currentView === 'coverage'"
+        <button mat-raised-button color="primary" (click)="switchView('coverage')"
+            [class.mat-primary]="currentView === 'coverage'" [class.mat-button-disabled]="currentView !== 'coverage'"
             class="control-btn">
             Области покрытия
         </button>
 
-        <button matButton="elevated" (click)="switchView('markers')" [class.active]="currentView === 'markers'"
+        <button mat-raised-button color="primary" (click)="switchView('markers')"
+            [class.mat-primary]="currentView === 'markers'" [class.mat-button-disabled]="currentView !== 'markers'"
             class="control-btn">
             Точечный вид
         </button>

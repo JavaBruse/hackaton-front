@@ -3,6 +3,8 @@ import * as L from 'leaflet';
 import { META_DATA } from './data/meta-data';
 import { MATCH_DATA } from './data/match-data';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
 
 interface MetaData {
   kind: 'q' | 'qneg' | 'db';
@@ -17,7 +19,7 @@ interface MetaData {
 @Component({
   selector: 'app-master-map',
   templateUrl: './master-map.component.html',
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, MatButtonToggleModule, MatIconModule],
   styleUrl: './master-map.component.css'
 })
 export class MasterMapComponent implements AfterViewInit {
@@ -26,6 +28,7 @@ export class MasterMapComponent implements AfterViewInit {
   private markersLayer = L.layerGroup();
 
   private META: any[] = META_DATA;
+
 
   // Режим отображения
   currentView: 'coverage' | 'markers' = 'coverage';
@@ -43,8 +46,8 @@ export class MasterMapComponent implements AfterViewInit {
 
     this.map = L.map('map', {
       zoomControl: false,
-      preferCanvas: true,
-      attributionControl: false // Полностью отключаем
+      preferCanvas: true
+      // attributionControl: false // Полностью отключаем
     });
 
     // Немецкий tile-сервер (без украинской символики)
