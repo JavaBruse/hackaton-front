@@ -27,7 +27,7 @@ export class TaskService {
     loadAll() {
         this.http.get<TaskResponse[]>(`${this.apiUrl}/all`).subscribe({
             next: (tasks) => this.tasksSignal.set(tasks),
-            error: () => this.tasksSignal.set([]),
+            error: () => { },
         });
     }
 
@@ -48,21 +48,21 @@ export class TaskService {
     add(task: TaskRquests) {
         this.http.post<TaskResponse[]>(`${this.apiUrl}/add`, task).subscribe({
             next: (tasks) => this.tasksSignal.set(tasks),
-            error: () => this.tasksSignal.set([]),
+            error: () => { },
         });
     }
 
     save(task: TaskRquests) {
         this.http.post<TaskResponse[]>(`${this.apiUrl}/save`, task).subscribe({
             next: (tasks) => this.tasksSignal.set(tasks),
-            error: () => this.tasksSignal.set([]),
+            error: () => { },
         });
     }
 
     delete(id: string) {
         this.http.delete<TaskResponse[]>(`${this.apiUrl}/delete/${id}`).subscribe({
             next: (tasks) => this.tasksSignal.set(tasks),
-            error: () => this.tasksSignal.set([]),
+            error: () => { },
         });
     }
 
@@ -70,7 +70,7 @@ export class TaskService {
     startTask(id: string) {
         this.http.put<TaskResponse[]>(`${this.apiUrl}/start/${id}`, null).subscribe({
             next: (tasks) => this.tasksSignal.set(tasks),
-            error: () => this.tasksSignal.set([]),
+            error: () => { },
         });
     }
 

@@ -18,35 +18,35 @@ export class PhotoService {
     loadAll() {
         this.http.get<PhotoResponse[]>(`${this.apiUrl}/all`).subscribe({
             next: (photos) => this.photosSignal.set(photos),
-            error: () => this.photosSignal.set([]),
+            error: () => { },
         });
     }
 
     loadAllByTask(taskId: string) {
         this.http.get<PhotoResponse[]>(`${this.apiUrl}/all/${taskId}`).subscribe({
             next: (photos) => this.photosSignal.set(photos),
-            error: () => this.photosSignal.set([]),
+            error: () => { },
         });
     }
 
     add(photo: PhotoRequest) {
         this.http.post<PhotoResponse[]>(`${this.apiUrl}/add`, photo).subscribe({
             next: (photos) => this.photosSignal.set(photos),
-            error: () => this.photosSignal.set([]),
+            error: () => { },
         });
     }
 
     save(photo: PhotoRequest) {
         this.http.post<PhotoResponse[]>(`${this.apiUrl}/save`, photo).subscribe({
             next: (photos) => this.photosSignal.set(photos),
-            error: () => this.photosSignal.set([]),
+            error: () => { },
         });
     }
 
     delete(id: string) {
         this.http.delete<PhotoResponse[]>(`${this.apiUrl}/delete/${id}`).subscribe({
             next: (photos) => this.photosSignal.set(photos),
-            error: () => this.photosSignal.set([]),
+            error: () => { },
         });
     }
 
