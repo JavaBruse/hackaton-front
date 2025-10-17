@@ -18,3 +18,17 @@ svg {
     width: 19px;
     height: 19px;
 }
+
+.icon-menu.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

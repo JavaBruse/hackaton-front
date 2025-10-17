@@ -32,7 +32,9 @@
                         <mat-icon class="icon-menu">fiber_new</mat-icon>
 
                         } @else if (task.status==='IN_PROGRESS') {
-                        <mat-icon class="icon-menu">autorenew</mat-icon>
+                        <mat-icon class="icon-menu" [class.spin]="task.status === 'IN_PROGRESS'">
+                            autorenew
+                        </mat-icon>
                         } @else {
                         <mat-icon class="icon-menu">flag</mat-icon>
                         }
@@ -47,13 +49,14 @@
                         <div>
                             <div>Дата создания:: {{ task.createdAt | date:'dd.MM.yy HH:mm' }}</div>
                             <div>Дата обновления: {{ task.updatedAt | date:'dd.MM.yy HH:mm' }}</div>
+                            <div>Фото в задаче: {{task.photoCount}}</div>
                         </div>
                     </mat-card-content>
                 </div>
 
 
                 <div class="card-side">
-                    <button matButton="elevated" (click)="openDialogTask('0ms', '0ms', task.id)"
+                    <button matButton="elevated" (click)="openDialogTask('0ms', '0ms', task.id, task.photoCount)"
                         [disabled]="task.status!='TASK_NEW'">Запустить
                         анализ!</button>
                     <button matButton="elevated" routerLink="/upload/{{ task.id }}"

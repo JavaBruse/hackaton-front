@@ -31,6 +31,10 @@ export class TaskService {
         });
     }
 
+    loadAllSilent() {
+        return this.http.get<TaskResponse[]>(`${this.apiUrl}/all`);
+    }
+
     reportXLSX(taskId: string) {
         this.http.getBlob(`${this.url}main/v1/report/XLSX/${taskId}`).subscribe({
             next: (blob) => {
@@ -72,6 +76,13 @@ export class TaskService {
             next: (tasks) => this.tasksSignal.set(tasks),
             error: () => { },
         });
+    }
+
+
+    updateTaskStatus(taskId: string, status: TaskResponse['status']) {
+        this.tasksSignal.update(tasks =>
+            tasks.map(task => task.id === taskId ? { ...task, status } : task)
+        );
     }
 
     clear() {

@@ -113,11 +113,20 @@ export class TasksComponent {
       this.errorMessegeService.showError('id не может быть null');
     }
   }
-  startTask(id: string | null) {
+  startTask(id: string | null, photoCount: number) {
     if (id) {
       this.taskService.startTask(id);
-    } else {
-      this.errorMessegeService.showError('id не может быть null');
+      setTimeout(() => {
+        this.taskService.loadAllSilent().subscribe({
+          next: (tasks) => {
+            const task = tasks.find(t => t.id === id);
+            if (task?.status === 'IN_PROGRESS') {
+              this.trackedTasks.set(id, photoCount);
+              this.startGlobalPolling();
+            }
+          }
+        });
+      }, 1000);
     }
   }
 
@@ -136,7 +145,7 @@ export class TasksComponent {
     });
   }
 
-  openDialogTask(enterAnimationDuration: string, exitAnimationDuration: string, taskId: string | null): void {
+  openDialogTask(enterAnimationDuration: string, exitAnimationDuration: string, taskId: string | null, photoCount: number): void {
     this.taskService.dialogTitle = "Запуск задачи";
     this.taskService.dialogDisk = "Запуск задачи не обратим, пока задача не завершится, её нельзя будет удалить!";
     const dialogRef = this.dialog.open(DialogComponent, {
@@ -146,7 +155,7 @@ export class TasksComponent {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        this.startTask(taskId);
+        this.startTask(taskId, photoCount);
       }
     });
   }
@@ -155,5 +164,49 @@ export class TasksComponent {
     if (id) {
       this.taskService.reportXLSX(id);
     }
+  }
+
+  private pollingInterval: any;
+  private trackedTasks = new Map<string, number>();
+
+  private startGlobalPolling() {
+    if (this.pollingInterval) return;
+
+    this.pollingInterval = setInterval(() => {
+      this.taskService.loadAllSilent().subscribe({
+        next: (newTasks) => {
+          newTasks.forEach(newTask => {
+            if (this.trackedTasks.has(newTask.id!)) {
+              this.taskService.updateTaskStatus(newTask.id!, newTask.status);
+
+              if (newTask.status !== 'IN_PROGRESS') {
+                this.trackedTasks.delete(newTask.id!);
+              }
+            }
+          });
+
+          if (this.trackedTasks.size === 0) {
+            this.stopGlobalPolling();
+          }
+        }
+      });
+    }, this.calculatePollingInterval());
+  }
+
+  private calculatePollingInterval(): number {
+    const maxPhotoCount = Math.max(...Array.from(this.trackedTasks.values()));
+    return maxPhotoCount * 3000;
+  }
+
+  private stopGlobalPolling() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+      this.trackedTasks.clear();
+    }
+  }
+
+  ngOnDestroy() {
+    this.stopGlobalPolling();
   }
 }

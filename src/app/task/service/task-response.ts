@@ -4,4 +4,5 @@ export interface TaskResponse {
     status: "TASK_NEW" | "IN_PROGRESS" | "COMPLETED";
     createdAt: number;
     updatedAt: number;
+    photoCount: number;
 }
