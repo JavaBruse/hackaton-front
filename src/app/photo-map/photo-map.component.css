@@ -1,0 +1,28 @@
+.map-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 20px);
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+#map:focus {
+    outline: none !important;
+}
+
+.leaflet-container {
+    z-index: 1;
+}
+
+.leaflet-control-container {
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .map-container {
+        height: calc(100vh - 20px - var(--sidebar-mini));
+    }
+}

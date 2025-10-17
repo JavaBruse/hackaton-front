@@ -11,6 +11,7 @@ import { UploadComponent } from './upload/upload.component';
 import { ApiDocsComponent } from './api-docs/api-docs.component';
 import { PhotosComponent } from './photo/photos/photos.component';
 import { MasterMapComponent } from './master-map/master-map.component';
+import { PhotoMapComponent } from './photo-map/photo-map.component';
 
 export const routes: Routes = [
     { path: '', component: RootComponent, pathMatch: 'full' },
@@ -24,6 +25,7 @@ export const routes: Routes = [
     { path: 'all-photo/:id', component: PhotosComponent, canActivate: [AuthGuard] },
     { path: 'all-photo', component: PhotosComponent, canActivate: [AuthGuard] },
     { path: 'OpenAPI', component: ApiDocsComponent, canActivate: [AuthGuard] },
+    { path: 'photo-map', component: PhotoMapComponent, canActivate: [AuthGuard] },
     { path: 'VRP-map', component: MasterMapComponent },
     { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

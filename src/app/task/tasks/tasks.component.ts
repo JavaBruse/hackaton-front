@@ -22,6 +22,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../../dialog/dialog.component';
 import { StyleSwitcherService } from '../../services/style-switcher.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+import { PhotoResponse } from '../../photo/service/photo-response';
 
 @Component({
   selector: 'app-tasks',
@@ -53,7 +55,6 @@ export class TasksComponent {
   styleSwithService = inject(StyleSwitcherService);
   editTaskId: string | null = null;
   entityes = signal<TaskResponse[]>([]);
-
   readonly dialog = inject(MatDialog);
 
   /////////////////////////"TASK_NEW" | "IN_PROGRESS" | "COMPLETED"
@@ -86,7 +87,7 @@ export class TasksComponent {
 
   /////////////////////////
 
-  constructor() {
+  constructor(private router: Router) {
     effect(() => {
       this.taskService.loadAll();
     });
@@ -209,4 +210,11 @@ export class TasksComponent {
   ngOnDestroy() {
     this.stopGlobalPolling();
   }
+
+  openMap(photos: PhotoResponse[]) {
+    if (!photos) return;
+    console.log(photos);
+    this.router.navigate(['/photo-map'], { state: { photos } });
+  }
+
 }

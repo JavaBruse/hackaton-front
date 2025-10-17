@@ -7,8 +7,8 @@ export interface PhotoResponse {
     status: "TASK_NEW" | "IN_PROGRESS" | "COMPLETED";
     contentType?: string;
     updatedAt: number;
-    camMetadataResponse?: CamMetadataResponse;  // опционально, может отсутствовать
-    constructMetadataResponses: ConstructMetadataResponse[];  // всегда массив, может быть пустым
+    camMetadataResponse?: CamMetadataResponse;
+    constructMetadataResponses: ConstructMetadataResponse[];
 }
 
 export interface CamMetadataResponse {

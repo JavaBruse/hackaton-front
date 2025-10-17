@@ -1,3 +1,5 @@
+import { PhotoResponse } from "../../photo/service/photo-response";
+
 export interface TaskResponse {
     id: string | null;
     name: string;
@@ -5,4 +7,5 @@ export interface TaskResponse {
     createdAt: number;
     updatedAt: number;
     photoCount: number;
+    photos: PhotoResponse[];
 }
