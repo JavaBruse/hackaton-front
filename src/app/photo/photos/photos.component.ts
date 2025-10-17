@@ -26,6 +26,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MapComponent } from "../../map/map.component";
 import { TaskService } from '../../task/service/task.service';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-photos',
@@ -45,7 +46,8 @@ import { TaskService } from '../../task/service/task.service';
     MatCheckboxModule,
     DatePipe,
     MatFormFieldModule, MatDatepickerModule,
-    MapComponent
+    MapComponent,
+    MatTabsModule
   ],
   templateUrl: './photos.component.html',
   styleUrl: './photos.component.css',

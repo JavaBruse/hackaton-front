@@ -47,15 +47,23 @@
                             <div class="photo-section">
                                 @if (photo.status==='COMPLETED') {
                                 @if (photo.filePathComplete) {
-                                <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-image"
-                                    loading="lazy">
+                                <mat-tab-group>
+                                    <mat-tab label="Оригинал"><img [src]="photo.filePathOriginal" [alt]="photo.name"
+                                            class="photo-image" loading="lazy"> </mat-tab>
+                                    <mat-tab label="Обработанное"> <img [src]="photo.filePathComplete"
+                                            [alt]="photo.name" class="photo-image" loading="lazy"> </mat-tab>
+                                </mat-tab-group>
                                 }@else{
-                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
-                                    loading="lazy">
+                                <mat-tab-group>
+                                    <mat-tab label="Оригинал"><img [src]="photo.filePathOriginal" [alt]="photo.name"
+                                            class="photo-image" loading="lazy"> </mat-tab>
+                                </mat-tab-group>
                                 }
                                 } @else{
-                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-image"
-                                    loading="lazy">
+                                <mat-tab-group>
+                                    <mat-tab label="Оригинал"><img [src]="photo.filePathOriginal" [alt]="photo.name"
+                                            class="photo-image" loading="lazy"> </mat-tab>
+                                </mat-tab-group>
                                 }
                                 <div class="text">
                                     <div>Ш: {{photo.camMetadataResponse?.latitude}}</div>
@@ -64,42 +72,47 @@
                             </div>
 
                             <!-- Параметры справа -->
-                            @if (false) {
                             <div class="parameters-section">
+
                                 <h3>Основные параметры</h3>
-                                <p><strong>Всего фото: </strong>{{phtotService.photos().length}} </p>
-                                <p><strong>ID:</strong> {{photo.id}}</p>
+                                <!-- <p><strong>Всего фото: </strong>{{phtotService.photos().length}} </p> -->
+                                <!-- <p><strong>ID:</strong> {{photo.id}}</p> -->
                                 <p><strong>Название:</strong> {{photo.name}}</p>
-                                <p><strong>Хэш файла:</strong> {{photo.fileHash}}</p>
+                                <!-- <p><strong>Хэш файла:</strong> {{photo.fileHash}}</p> -->
                                 <p><strong>Тип контента:</strong> {{photo.contentType}}</p>
-                                <p><strong>Обновлено:</strong> {{photo.updatedAt | date}}</p>
+                                <p><strong>Обновлено:</strong> {{photo.updatedAt | date:'dd.MM.yyyy HH:mm'}}</p>
+                                <hr>
                                 @if(photo.camMetadataResponse){
                                 <div class="metadata-section">
-                                    <h4>Метаданные камеры</h4>
-                                    <p><strong>ID камеры:</strong> {{photo.camMetadataResponse?.id}}</p>
-                                    <p><strong>Адрес:</strong> {{photo.camMetadataResponse?.address}}</p>
-                                    <p><strong>Широта:</strong> {{photo.camMetadataResponse?.latitude}}</p>
-                                    <p><strong>Долгота:</strong> {{photo.camMetadataResponse?.longitude}}</p>
-                                    <p><strong>Азимут:</strong> {{photo.camMetadataResponse?.bearing}}</p>
-                                    <p><strong>Высота:</strong> {{photo.camMetadataResponse?.elevation}}</p>
+                                    <h3>Метаданные камеры</h3>
+                                    <!-- <p><strong>ID камеры:</strong> {{photo.camMetadataResponse.id}}</p> -->
+                                    <p><strong>Адрес:</strong> {{photo.camMetadataResponse.address}}</p>
+                                    <p><strong>Широта:</strong> {{photo.camMetadataResponse.latitude}}</p>
+                                    <p><strong>Долгота:</strong> {{photo.camMetadataResponse.longitude}}</p>
+                                    <p><strong>Азимут:</strong> {{photo.camMetadataResponse.bearing}}</p>
+                                    <p><strong>Высота:</strong> {{photo.camMetadataResponse.elevation}}</p>
                                 </div>
+                                } @else {
+                                <h3>Метаданные камеры не обнаружены</h3>
+
                                 }
-                                @if(photo.constructMetadataResponses){
+                                @if(photo.constructMetadataResponses.length>0){
                                 <div class="metadata-section">
-                                    @for (construct of photo.constructMetadataResponses; track construct.id) {
-                                    <div class="construct-item">
-                                        <p><strong>ID конструкции:</strong> {{construct.id}}</p>
-                                        <p><strong>Тип:</strong> {{construct.type}}</p>
-                                        <p><strong>Адрес:</strong> {{construct.address}}</p>
-                                        <p><strong>Широта:</strong> {{construct.latitude}}</p>
-                                        <p><strong>Долгота:</strong> {{construct.longitude}}</p>
-                                        <hr>
-                                    </div>
-                                    }
+                                    <hr>
+                                    <h3>Bbox карте</h3>
+                                    <mat-tab-group>
+                                        @for (construct of photo.constructMetadataResponses; track construct.id) {
+                                        <mat-tab label={{construct.position}}>
+                                            <!-- <p><strong>Тип:</strong> {{construct.type}}</p> -->
+                                            <p><strong>Адрес:</strong> {{construct.address}}</p>
+                                            <p><strong>Широта:</strong> {{construct.latitude}}</p>
+                                            <p><strong>Долгота:</strong> {{construct.longitude}}</p>
+                                        </mat-tab>
+                                        }
+                                    </mat-tab-group>
                                 </div>
                                 }
                             </div>
-                            }
 
                         </div>
                     </mat-card-content>
