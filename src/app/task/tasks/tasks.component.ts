@@ -114,20 +114,14 @@ export class TasksComponent {
       this.errorMessegeService.showError('id не может быть null');
     }
   }
+
   startTask(id: string | null, photoCount: number) {
     if (id) {
       this.taskService.startTask(id);
+      this.trackedTasks.set(id, photoCount);
       setTimeout(() => {
-        this.taskService.loadAllSilent().subscribe({
-          next: (tasks) => {
-            const task = tasks.find(t => t.id === id);
-            if (task?.status === 'IN_PROGRESS') {
-              this.trackedTasks.set(id, photoCount);
-              this.startGlobalPolling();
-            }
-          }
-        });
-      }, 1000);
+        this.startGlobalPolling();
+      }, 10000);
     }
   }
 
@@ -172,38 +166,49 @@ export class TasksComponent {
 
   private startGlobalPolling() {
     if (this.pollingInterval) return;
-
-    this.pollingInterval = setInterval(() => {
+    let pollingTime = 10000;
+    const poll = () => {
       this.taskService.loadAllSilent().subscribe({
         next: (newTasks) => {
+          let hasInProgress = false;
+          let minPollingTime = 10000;
           newTasks.forEach(newTask => {
             if (this.trackedTasks.has(newTask.id!)) {
               this.taskService.updateTaskStatus(newTask.id!, newTask.status);
+              if (newTask.status === 'IN_PROGRESS') {
+                hasInProgress = true;
+                const completedPhotos = newTask.photos.filter(p => p.status === 'COMPLETED').length;
+                const totalPhotos = this.trackedTasks.get(newTask.id!)!;
 
-              if (newTask.status !== 'IN_PROGRESS') {
+                if (completedPhotos > 0) {
+                  const progress = completedPhotos / totalPhotos;
+                  const taskPollingTime = Math.max(2000, 10000 - (progress * 8000));
+                  // Берем минимальное время из всех активных задач
+                  minPollingTime = Math.min(minPollingTime, taskPollingTime);
+                }
+              } else if (newTask.status === 'COMPLETED') {
                 this.trackedTasks.delete(newTask.id!);
               }
             }
           });
-
-          if (this.trackedTasks.size === 0) {
+          pollingTime = minPollingTime;
+          if (!hasInProgress) {
             this.stopGlobalPolling();
+          } else {
+            this.stopGlobalPolling();
+            this.pollingInterval = setTimeout(poll, pollingTime);
           }
         }
       });
-    }, this.calculatePollingInterval());
-  }
+    };
 
-  private calculatePollingInterval(): number {
-    const maxPhotoCount = Math.max(...Array.from(this.trackedTasks.values()));
-    return maxPhotoCount * 3000;
+    this.pollingInterval = setTimeout(poll, pollingTime);
   }
 
   private stopGlobalPolling() {
     if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
+      clearTimeout(this.pollingInterval);
       this.pollingInterval = null;
-      this.trackedTasks.clear();
     }
   }
 
