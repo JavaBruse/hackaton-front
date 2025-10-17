@@ -1,7 +1,10 @@
 import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet';
-import { Router } from '@angular/router';
 import { PhotoResponse } from '../photo/service/photo-response';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 export interface MapConfig {
   showControls?: boolean;
@@ -9,15 +12,22 @@ export interface MapConfig {
 
 @Component({
   selector: 'app-photo-map',
-  imports: [],
+  imports: [CommonModule, FormsModule, MatSelectModule, MatFormFieldModule],
   templateUrl: './photo-map.component.html',
   styleUrl: './photo-map.component.css'
 })
 export class PhotoMapComponent implements AfterViewInit, OnChanges {
   private map: L.Map | null = null;
   private markersLayer = L.layerGroup();
+  private baseLayers: { [key: string]: L.TileLayer } = {};
 
   photos: PhotoResponse[] = [];
+  selectedLayer: string = 'scheme';
+  availableLayers = [
+    { value: 'scheme', label: 'Схема' },
+    { value: 'satellite', label: 'Спутник' },
+    { value: 'hybrid', label: 'Гибрид' }
+  ];
 
   ngOnInit() {
     this.photos = history.state.photos || [];
@@ -45,17 +55,63 @@ export class PhotoMapComponent implements AfterViewInit, OnChanges {
     this.map = L.map('map', {
       zoomControl: false,
       preferCanvas: true
+      // Убери crs: L.CRS.EPSG3395
     });
 
-    L.tileLayer("https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap contributors',
-      subdomains: 'abcd'
-    }).addTo(this.map);
+    // Создаем слои OpenStreetMap
+    this.baseLayers['scheme'] = L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      { maxZoom: 19, attribution: '© OpenStreetMap contributors' }
+    );
+
+    this.baseLayers['satellite'] = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 19, attribution: '© Esri' }
+    );
+
+    this.baseLayers['hybrid'] = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 19, attribution: '© Esri' }
+    );
+
+    // Добавляем схему по умолчанию
+    this.baseLayers[this.selectedLayer].addTo(this.map);
 
     L.control.zoom({
       position: 'topleft'
     }).addTo(this.map);
+
+    this.map.addLayer(this.markersLayer);
+  }
+
+  onLayerChange() {
+    if (!this.map) return;
+
+    // Удаляем все тайловые слои
+    this.map.eachLayer(layer => {
+      if (layer instanceof L.TileLayer) {
+        this.map?.removeLayer(layer);
+      }
+    });
+
+    // Добавляем выбранный слой
+    if (this.selectedLayer === 'hybrid') {
+      // Спутник Esri
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: '© Esri'
+      }).addTo(this.map);
+
+      // ТОЛЬКО подписи (без фона)
+      // Белые подписи
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+        maxZoom: 25,
+        attribution: '© CartoDB',
+        opacity: 1
+      }).addTo(this.map);
+    } else {
+      this.baseLayers[this.selectedLayer].addTo(this.map);
+    }
 
     this.map.addLayer(this.markersLayer);
   }
@@ -78,7 +134,7 @@ export class PhotoMapComponent implements AfterViewInit, OnChanges {
           color,
           photo,
           'Камера',
-          'C'  // ← Добавь этот параметр
+          'C'
         );
       }
 
@@ -91,7 +147,7 @@ export class PhotoMapComponent implements AfterViewInit, OnChanges {
             color,
             photo,
             `Сооружение ${construct.position || ''}`.trim(),
-            construct.position ? construct.position.toString() : '?'  // ← И этот параметр
+            construct.position ? construct.position.toString() : '?'
           );
         }
       });
@@ -106,7 +162,7 @@ export class PhotoMapComponent implements AfterViewInit, OnChanges {
     color: string,
     photo: PhotoResponse,
     title: string,
-    markerText: string  // ← Этот параметр должен быть
+    markerText: string
   ) {
     const icon = this.createCircleIcon(color, markerText);
 
@@ -153,7 +209,7 @@ export class PhotoMapComponent implements AfterViewInit, OnChanges {
     ${photoUrl ? `
       <hr style="margin: 0px 0;">
       <img src="${photoUrl}" 
-           style="width: 100%; max-height: 200px; object-fit: contain; border-radius: 4px;" 
+           style="width: 100%; max-height: 300px; object-fit: contain; border-radius: 4px;" 
            alt="${photo.name}">
     ` : ''}
   </div>

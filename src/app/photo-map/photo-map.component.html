@@ -1,3 +1,13 @@
 <div class="map-container">
     <div id="map"></div>
+
+    <div class="layer-controls">
+        <mat-form-field>
+            <mat-select [(value)]="selectedLayer" (selectionChange)="onLayerChange()">
+                <mat-option *ngFor="let layer of availableLayers" [value]="layer.value">
+                    {{layer.label}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
 </div>
