@@ -6,7 +6,7 @@
     padding: .5rem 1rem;
     background: var(--card);
     box-shadow: var(--shadow);
-    z-index: 1000;
+    z-index: 1002;
     position: sticky;
     top: 0;
 }
@@ -21,7 +21,7 @@
     box-shadow: var(--shadow);
     overflow: hidden;
     transition: width .3s, transform .3s;
-    z-index: 1000;
+    z-index: 1002;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -117,7 +117,7 @@
         position: fixed;
         inset: 0;
         height: 100%;
-        z-index: 900;
+        z-index: 1001;
         background: rgba(0, 0, 0, 0.5);
         /* Затемнение */
         backdrop-filter: blur(10px);

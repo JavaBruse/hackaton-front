@@ -140,12 +140,12 @@
         </mat-card>
         }
     </div>
-</div>
-@if (isViewMap()) {
-<div class="overlay" #overlay (click)="closeOverlay($event)">
-    <div class="close-btn" (click)="closeMapButton()">
-        <mat-icon>close</mat-icon>
+    @if (isViewMap()) {
+    <div class="overlay" #overlay (click)="closeOverlay($event)">
+        <div class="close-btn" (click)="closeMapButton()">
+            <mat-icon>close</mat-icon>
+        </div>
+        <app-photo-map></app-photo-map>
     </div>
-    <app-photo-map style="width: 100%; height: 100%;"></app-photo-map>
+    }
 </div>
-}

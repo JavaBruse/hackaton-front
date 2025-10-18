@@ -31,6 +31,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { PhotoMapComponent } from "../../photo-map/photo-map.component";
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import { Renderer2 } from '@angular/core';
+
 
 export class RussianPaginatorIntl extends MatPaginatorIntl {
   override itemsPerPageLabel = 'Фотографии:';
@@ -92,6 +94,7 @@ export class PhotosComponent {
   private readonly photoSignal = signal<PhotoResponse | null>(null);
   isViewMap = signal(false);
   selectedPhoto = signal<PhotoResponse[]>([]);
+  render = inject(Renderer2);
   @ViewChild('overlay') overlay!: ElementRef;
 
 
@@ -109,19 +112,22 @@ export class PhotosComponent {
     this.pageSize.set(event.pageSize);
   }
 
-  closeOverlay(event: MouseEvent) {
-    if (event.target === this.overlay.nativeElement) {
+  closeOverlay(event: Event) {
+    if (event.target === event.currentTarget) {
       this.isViewMap.set(false);
+      this.render.removeStyle(document.body, 'overflow');
     }
   }
 
   closeMapButton() {
     this.isViewMap.set(false);
+    this.render.removeStyle(document.body, 'overflow');
   }
 
   openMapOverlay(photo: PhotoResponse) {
     this.phtotService.currentMapPhotos.set([photo])
     this.isViewMap.set(true);
+    this.render.setStyle(document.body, 'overflow', 'hidden');
   }
 
   range = new FormGroup({

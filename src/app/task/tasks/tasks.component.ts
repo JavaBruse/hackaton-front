@@ -28,6 +28,9 @@ import { PhotoService } from '../../photo/service/photo.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import { Renderer2 } from '@angular/core';
+import { PhotoMapComponent } from "../../photo-map/photo-map.component";
+
 
 export class RussianPaginatorIntl extends MatPaginatorIntl {
   override itemsPerPageLabel = 'Фотографии:';
@@ -69,7 +72,8 @@ export class RussianPaginatorIntl extends MatPaginatorIntl {
     TaskEditComponent,
     DatePipe,
     MatExpansionModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    PhotoMapComponent
   ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
@@ -85,9 +89,9 @@ export class TasksComponent {
   entityes = signal<TaskResponse[]>([]);
   readonly dialog = inject(MatDialog);
   photoService = inject(PhotoService);
-
-
+  render = inject(Renderer2);
   taskPaginationStates = new Map<string, { currentPage: number, pageSize: number }>();
+  isViewMap = signal(false);
 
   getPaginatedTaskPhotos(task: TaskResponse) {
     const taskId = task.id!;
@@ -277,11 +281,21 @@ export class TasksComponent {
     this.stopGlobalPolling();
   }
 
-  openMap(photos: PhotoResponse[]) {
+  closeOverlay(event: Event) {
+    if (event.target === event.currentTarget) {
+      this.isViewMap.set(false);
+      this.render.removeStyle(document.body, 'overflow');
+    }
+  }
 
-    if (!photos) return;
-    // console.log(photos);
-    this.photoService.currentMapPhotos.set(photos);
-    this.router.navigate(['/photo-map']);
+  closeMapButton() {
+    this.isViewMap.set(false);
+    this.render.removeStyle(document.body, 'overflow');
+  }
+
+  openMapOverlay(photos: PhotoResponse[]) {
+    this.photoService.currentMapPhotos.set(photos)
+    this.isViewMap.set(true);
+    this.render.setStyle(document.body, 'overflow', 'hidden');
   }
 }

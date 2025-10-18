@@ -105,7 +105,7 @@
                     <button matButton="elevated" routerLink="/upload/{{ task.id }}"
                         [disabled]="task.status !='TASK_NEW'">Загрузить фотографии</button>
                     <button matButton="elevated" routerLink="/all-photo/{{ task.id }}">Фотографии</button>
-                    <button matButton="elevated" (click)="openMap(task.photos)"
+                    <button matButton="elevated" (click)="openMapOverlay(task.photos)"
                         [disabled]="task.status !='COMPLETED'">Интерактивная карта</button>
                     <button matButton="elevated" (click)="openDialog('0ms', '0ms', task.id)"
                         [disabled]="task.status=='IN_PROGRESS'">Удалить</button>
@@ -119,4 +119,12 @@
         }
         }
     </div>
+    @if (isViewMap()) {
+    <div class="overlay" #overlay (click)="closeOverlay($event)">
+        <div class="close-btn" (click)="closeMapButton()">
+            <mat-icon>close</mat-icon>
+        </div>
+        <app-photo-map></app-photo-map>
+    </div>
+    }
 </div>
