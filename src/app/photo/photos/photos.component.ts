@@ -30,14 +30,10 @@ import { StyleSwitcherService } from '../../services/style-switcher.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { PhotoMapComponent } from "../../photo-map/photo-map.component";
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-
-
-
 import { MatPaginatorIntl } from '@angular/material/paginator';
 
-// Добавь этот класс ПЕРЕД твоим компонентом
 export class RussianPaginatorIntl extends MatPaginatorIntl {
-  override itemsPerPageLabel = 'Элементов на странице:';
+  override itemsPerPageLabel = 'Фотографии:';
   override nextPageLabel = 'Следующая страница';
   override previousPageLabel = 'Предыдущая страница';
   override firstPageLabel = 'Первая страница';

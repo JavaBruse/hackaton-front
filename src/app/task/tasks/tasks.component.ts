@@ -27,6 +27,27 @@ import { PhotoResponse } from '../../photo/service/photo-response';
 import { PhotoService } from '../../photo/service/photo.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+
+export class RussianPaginatorIntl extends MatPaginatorIntl {
+  override itemsPerPageLabel = 'Фотографии:';
+  override nextPageLabel = 'Следующая страница';
+  override previousPageLabel = 'Предыдущая страница';
+  override firstPageLabel = 'Первая страница';
+  override lastPageLabel = 'Последняя страница';
+
+  override getRangeLabel = (page: number, pageSize: number, length: number) => {
+    if (length === 0 || pageSize === 0) {
+      return `0 из ${length}`;
+    }
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex = startIndex < length ?
+      Math.min(startIndex + pageSize, length) :
+      startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} из ${length}`;
+  };
+}
 
 @Component({
   selector: 'app-tasks',
@@ -52,7 +73,9 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
   ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [{ provide: MatPaginatorIntl, useClass: RussianPaginatorIntl }],
+
 })
 export class TasksComponent {
   taskService = inject(TaskService);
@@ -70,7 +93,7 @@ export class TasksComponent {
     const taskId = task.id!;
 
     if (!this.taskPaginationStates.has(taskId)) {
-      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 3 });
+      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 2 });
     }
 
     const state = this.taskPaginationStates.get(taskId)!;
@@ -91,7 +114,7 @@ export class TasksComponent {
   getPaginationState(task: TaskResponse) {
     const taskId = task.id!;
     if (!this.taskPaginationStates.has(taskId)) {
-      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 3 });
+      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 2 });
     }
     return this.taskPaginationStates.get(taskId)!;
   }

@@ -78,3 +78,36 @@ svg {
         transform: rotate(360deg);
     }
 }
+
+@media (max-width: 830px) {
+    .card-layout {
+        display: flex;
+        flex-direction: column;
+        /* меняем row на column */
+        align-items: stretch;
+        height: 100%;
+    }
+
+    .card-main {
+        flex: 1;
+        min-width: 0;
+        order: 2;
+        /* основной контент в середине */
+    }
+
+    .card-side {
+        display: flex;
+        /* flex-direction: row; */
+        /* кнопки теперь в строку */
+        justify-content: space-between;
+        /* равномерно распределить */
+        gap: 10px;
+        padding: 5px;
+        order: 1;
+        /* верхний сайд */
+    }
+
+    .card-side:last-child {
+        order: 3;
+    }
+}

@@ -45,7 +45,7 @@
                         <mat-card-title>{{ task.name }}</mat-card-title>
                     </mat-card-header>
                     <mat-card-content class="description">
-                        <mat-expansion-panel [expanded]="true">
+                        <mat-expansion-panel>
                             <mat-expansion-panel-header>
                                 <mat-panel-title>Дополнительная информация</mat-panel-title>
                             </mat-expansion-panel-header>
@@ -68,7 +68,7 @@
                             <!-- Пагинатор для конкретной задачи -->
                             <mat-paginator class="custom-paginator" [length]="task.photos.length"
                                 [pageSize]="getPaginationState(task).pageSize"
-                                [pageIndex]="getPaginationState(task).currentPage" [pageSizeOptions]="[3, 7, 10]"
+                                [pageIndex]="getPaginationState(task).currentPage" [pageSizeOptions]="[2,4,6, 8, 10]"
                                 (page)="onPhotoPageChange($event, task)">
                             </mat-paginator>
 
