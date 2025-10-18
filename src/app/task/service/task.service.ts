@@ -13,12 +13,13 @@ export class TaskService {
     private apiUrl = this.url + 'main/v1/task';
     dialogTitle: string | null = null;
     dialogDisk: string | null = null;
-
+    readonly taskUploadPhoto = signal<TaskResponse | null>(null);
 
 
     private readonly tasksSignal = signal<TaskResponse[]>([]);
     private readonly isVisibleAddSignal = signal(false);
     private readonly isVisibleEditSignal = signal(false);
+    readonly isVisibleStepSignal = signal(false);
 
     readonly tasks = this.tasksSignal.asReadonly();
     readonly visibleAdd = this.isVisibleAddSignal.asReadonly();
@@ -52,6 +53,13 @@ export class TaskService {
     add(task: TaskRquests) {
         this.http.post<TaskResponse[]>(`${this.apiUrl}/add`, task).subscribe({
             next: (tasks) => this.tasksSignal.set(tasks),
+            error: () => { },
+        });
+    }
+
+    addAndGetId(task: TaskRquests) {
+        this.http.post<TaskResponse>(`${this.apiUrl}/add-get-id`, task).subscribe({
+            next: (task) => this.taskUploadPhoto.set(task),
             error: () => { },
         });
     }
@@ -93,5 +101,9 @@ export class TaskService {
 
     setVisibleAdd(value: boolean) {
         this.isVisibleAddSignal.set(value);
+    }
+
+    setVisibleStep(value: boolean) {
+        this.isVisibleStepSignal.set(value);
     }
 }

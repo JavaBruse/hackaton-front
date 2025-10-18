@@ -79,6 +79,7 @@ svg {
     }
 }
 
+
 @media (max-width: 830px) {
     .card-layout {
         display: flex;

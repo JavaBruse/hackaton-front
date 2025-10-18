@@ -1,17 +1,12 @@
 <section>
-    <button class="back-button" matButton="elevated" routerLink="">Назад</button>
     <!-- зона drag&drop -->
-    <div class=" drop-zone" (dragover)="allowDrop($event)" (dragleave)="onDragLeave()" (drop)="onFileDropped($event)"
+    <div class="drop-zone" (dragover)="allowDrop($event)" (dragleave)="onDragLeave()" (drop)="onFileDropped($event)"
         [class.drag-over]="dragOver">
         <p>Перетащите файлы сюда или выберите вручную</p>
         <input type="file" (change)="onFileSelected($event)" multiple accept="image/*,.zip" style="display: none;"
             #fileInput>
         <button matButton="elevated" (click)="fileInput.click()">Выбрать файлы</button>
     </div>
-
-    @if (files.length > 0) {
-    <button matButton="elevated" class="send-button" (click)="onUpload()" [disabled]="uploading">Отправить</button>
-    }
     <!-- список файлов -->
     @if (files.length > 0) {
     <ul>
@@ -73,7 +68,9 @@
         </div>
     </ul>
     }
-
+    @if (files.length > 0) {
+    <button matButton="elevated" class="send-button" (click)="onUpload()" [disabled]="uploading">Отправить</button>
+    }
     <!-- overlay предпросмотр -->
     @if (previewImage) {
     <div class="overlay" (click)="closePreview()">

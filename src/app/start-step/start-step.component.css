@@ -1,0 +1,33 @@
+.step-form {
+    width: 100%;
+    height: 100%;
+    background-color: var(--card);
+    border: 1px solid #00878b;
+    border-radius: 10px;
+    overflow-y: auto !important;
+}
+
+
+::ng-deep .custom-step {
+    padding-top: 70px;
+    /* height: 90%; */
+    background: transparent !important;
+}
+
+.full-width {
+    padding-top: 10px;
+}
+
+.upload-step {
+    display: flex;
+    gap: 10px;
+}
+
+.full-width {
+    margin-top: 10px;
+    padding-bottom: 10px;
+}
+
+::ng-deep .custom-step .mat-step-header {
+    pointer-events: none;
+}

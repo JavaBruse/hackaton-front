@@ -9,7 +9,9 @@
                 <mat-button-toggle value="COMPLETED"><mat-icon>flag</mat-icon></mat-button-toggle>
             </mat-button-toggle-group>
         </div>
-        <button matButton="elevated" (click)="taskService.setVisibleAdd(true)">Создать задачу</button>
+        <!-- <button matButton="elevated" (click)="taskService.setVisibleAdd(true)">Создать задачу</button> -->
+        <button matButton="elevated" (click)="openOverlayStep()">Создать задачу</button>
+
     </div>
 
     <div class="cards-grid">
@@ -96,25 +98,25 @@
                         </mat-expansion-panel>
                     </mat-card-content>
                 </div>
-
-
                 <div class="card-side">
-                    <button matButton="elevated" (click)="openDialogTask('0ms', '0ms', task.id, task.photoCount)"
-                        [disabled]="task.status!='TASK_NEW'">Запустить
-                        анализ!</button>
-                    <button matButton="elevated" routerLink="/upload/{{ task.id }}"
-                        [disabled]="task.status !='TASK_NEW'">Загрузить фотографии</button>
-                    <button matButton="elevated" routerLink="/all-photo/{{ task.id }}">Фотографии</button>
-                    <button matButton="elevated" (click)="openMapOverlay(task.photos)"
-                        [disabled]="task.status !='COMPLETED'">Интерактивная карта</button>
-                    <button matButton="elevated" (click)="openDialog('0ms', '0ms', task.id)"
-                        [disabled]="task.status=='IN_PROGRESS'">Удалить</button>
+                    @if(task.status=='TASK_NEW'){
+                    <button matButton="elevated"
+                        (click)="openDialogTask('0ms', '0ms', task.id, task.photoCount)">Запустить анализ!</button>
+                    <button matButton="elevated" routerLink="/upload/{{ task.id }}">Загрузить фотографии</button>
+                    }
+                    @if(task.status=='COMPLETED'){
+                    <button matButton="elevated" (click)="openMapOverlay(task.photos)">Интерактивная карта</button>
+                    <button matButton="elevated" (click)="getReport(task.id|| '')">Экспорт XLSX</button>
+                    }
 
-                    <button matButton="elevated" [disabled]="task.status!='COMPLETED'"
-                        (click)="getReport(task.id|| '')">Экспорт XLSX</button>
+                    @if(task.photos.length>0){ <button matButton="elevated" routerLink="/all-photo/{{ task.id }}">
+                        Фотографии</button>
+                    }
+                    @if(task.status!='IN_PROGRESS'){
+                    <button matButton="elevated" (click)="openDialog('0ms', '0ms', task.id)">Удалить</button>
+                    }
                 </div>
             </div>
-
         </mat-card>
         }
         }
@@ -125,6 +127,14 @@
             <mat-icon>close</mat-icon>
         </div>
         <app-photo-map></app-photo-map>
+    </div>
+    }
+    @if (this.taskService.isVisibleStepSignal()) {
+    <div class="overlay" #overlay (click)="closeOverlayStep($event)">
+        <div class="close-btn" (click)="closeButtonStep()">
+            <mat-icon>close</mat-icon>
+        </div>
+        <app-start-step></app-start-step>
     </div>
     }
 </div>

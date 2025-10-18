@@ -1,11 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '../services/http.service';
 import { ErrorMessageService } from '../services/error-message.service';
 import { environment } from '../../environments/environment';
-import { UploadService } from './upload.service';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { UploadService } from '../upload/upload.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -16,10 +15,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { PhotoRequest } from '../photo/service/photo-request';
 import { FormsModule } from '@angular/forms';
 import exifr from 'exifr';
+import { ChangeDetectorRef } from '@angular/core';
+import { TaskService } from '../task/service/task.service';
+
 
 interface UploadFile {
   file: File;
@@ -33,7 +35,7 @@ interface UploadFile {
 }
 
 @Component({
-  selector: 'app-upload',
+  selector: 'app-upload-step',
   standalone: true,
   imports: [
     MatIconModule,
@@ -47,33 +49,30 @@ interface UploadFile {
     MatButtonToggleModule,
     MatMenuModule,
     MatSelectModule,
-    MatButtonModule,
     MatCheckboxModule,
     MatFormFieldModule,
     ReactiveFormsModule,
-    FormsModule,
-    RouterLink
+    FormsModule
   ],
-  templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.css']
+  templateUrl: './upload-step.component.html',
+  styleUrl: './upload-step.component.css'
 })
-export class UploadComponent {
+export class UploadStepComponent {
   files: UploadFile[] = [];
   http = inject(HttpService);
   uploadService = inject(UploadService);
   errorMessage = inject(ErrorMessageService);
+  taskService = inject(TaskService);
   urlApi = environment.apiUrl;
   uploading = false;
   dragOver = false;
   previewImage: string | null = null;
   id!: string;
+  private cdRef = inject(ChangeDetectorRef);
+  @Output() nextStep = new EventEmitter<void>();
 
-  constructor(private route: ActivatedRoute) { }
-
-  ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.id = params.get('id')!;
-    });
+  onSomeButtonClick() {
+    this.nextStep.emit();
   }
 
   private _uploadedCount = 0;
@@ -93,6 +92,7 @@ export class UploadComponent {
     this.dragOver = false;
     if (!event.dataTransfer?.files) return;
     this.addFiles(event.dataTransfer.files);
+    this.cdRef.detectChanges();
   }
 
   async addFiles(fileList: FileList): Promise<void> {
@@ -117,6 +117,8 @@ export class UploadComponent {
 
       this.files.push(uploadFile);
     }
+    this.cdRef.detectChanges();
+
   }
 
   private async readExifData(file: File, uploadFile: UploadFile): Promise<void> {
@@ -152,6 +154,7 @@ export class UploadComponent {
   allowDrop(event: DragEvent): void {
     event.preventDefault();
     this.dragOver = true;
+    this.cdRef.detectChanges();
   }
 
   onDragLeave(): void { this.dragOver = false; }
@@ -165,6 +168,7 @@ export class UploadComponent {
   removeFile(index: number): void {
     if (this.uploading) return;
     this.files.splice(index, 1);
+    this.cdRef.detectChanges();
   }
 
   showPreview(file: UploadFile): void {
@@ -187,6 +191,7 @@ export class UploadComponent {
       this.files = this.files.filter(f => !f.uploaded);
       this.uploading = false;
     }
+    this.cdRef.detectChanges();
   }
 
   private async uploadAllWithConcurrency(concurrency: number): Promise<void> {
@@ -208,13 +213,14 @@ export class UploadComponent {
     const parallel = Math.min(concurrency, total);
     for (let w = 0; w < parallel; w++) workers.push(worker());
     await Promise.all(workers);
+    this.cdRef.detectChanges();
   }
 
   private async uploadSingle(uploadFile: UploadFile): Promise<void> {
     try {
       const photoRequest: PhotoRequest = {
         name: uploadFile.file.name,
-        taskId: this.id,
+        taskId: this.taskService.taskUploadPhoto()?.id || '',
         latitude: uploadFile.latitude || null,
         longitude: uploadFile.longitude || null,
         contentType: uploadFile.file.type,
@@ -235,5 +241,7 @@ export class UploadComponent {
       uploadFile.uploaded = false;
       console.error(`Error uploading ${uploadFile.file.name}:`, err);
     }
+    this.onSomeButtonClick();
+    this.cdRef.detectChanges();
   }
 }

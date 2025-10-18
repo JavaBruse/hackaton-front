@@ -30,6 +30,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { Renderer2 } from '@angular/core';
 import { PhotoMapComponent } from "../../photo-map/photo-map.component";
+import { StartStepComponent } from "../../start-step/start-step.component";
 
 
 export class RussianPaginatorIntl extends MatPaginatorIntl {
@@ -73,7 +74,8 @@ export class RussianPaginatorIntl extends MatPaginatorIntl {
     DatePipe,
     MatExpansionModule,
     MatPaginatorModule,
-    PhotoMapComponent
+    PhotoMapComponent,
+    StartStepComponent
   ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
@@ -92,7 +94,6 @@ export class TasksComponent {
   render = inject(Renderer2);
   taskPaginationStates = new Map<string, { currentPage: number, pageSize: number }>();
   isViewMap = signal(false);
-
   getPaginatedTaskPhotos(task: TaskResponse) {
     const taskId = task.id!;
 
@@ -296,6 +297,23 @@ export class TasksComponent {
   openMapOverlay(photos: PhotoResponse[]) {
     this.photoService.currentMapPhotos.set(photos)
     this.isViewMap.set(true);
+    this.render.setStyle(document.body, 'overflow', 'hidden');
+  }
+
+  closeOverlayStep(event: Event) {
+    if (event.target === event.currentTarget) {
+      this.taskService.setVisibleStep(false);
+      this.render.removeStyle(document.body, 'overflow');
+    }
+  }
+
+  closeButtonStep() {
+    this.taskService.setVisibleStep(false);
+    this.render.removeStyle(document.body, 'overflow');
+  }
+
+  openOverlayStep() {
+    this.taskService.setVisibleStep(true);
     this.render.setStyle(document.body, 'overflow', 'hidden');
   }
 }

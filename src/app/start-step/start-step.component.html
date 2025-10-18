@@ -1,0 +1,30 @@
+<div class="step-form">
+    <mat-stepper class="custom-step" #stepper linear>
+        <mat-step [formGroup]="form" [editable]="false">
+            <ng-template matStepLabel>Создать</ng-template>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Название</mat-label>
+                <input matInput="elevated" formControlName="name" maxlength="100" placeholder="Введите название">
+                <mat-hint align="end">{{ form.get('name')?.value?.length || 0 }} / 100</mat-hint>
+            </mat-form-field>
+            <div>
+                <button matButton="elevated" class="full-width" matStepperNext (click)="saveTask()">Далее</button>
+            </div>
+        </mat-step>
+        <mat-step label="Загрузить">
+            <app-upload-step (nextStep)="stepper.next()"></app-upload-step>
+            <div class="upload-step">
+                <!-- <button matButton="elevated" class="full-width" matStepperPrevious>Назад</button> -->
+                <button matButton="elevated" class="full-width" matStepperNext>Далее</button>
+            </div>
+        </mat-step>
+        <mat-step>
+            <ng-template matStepLabel>Запустить</ng-template>
+            <div>
+                <button matButton="elevated" class="full-width" matStepperPrevious>Назад</button>
+                <button matButton="elevated" class="full-width" matStepperPrevious
+                    (click)="startTask()">Старт!!!</button>
+            </div>
+        </mat-step>
+    </mat-stepper>
+</div>
