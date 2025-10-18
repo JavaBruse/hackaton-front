@@ -11,9 +11,13 @@ export class PhotoService {
     private http = inject(HttpService);
     private url = environment.apiUrl;
     private apiUrl = this.url + 'main/v1/photo';
-
+    readonly currentMapPhotos = signal<PhotoResponse[]>([])
     private readonly photosSignal = signal<PhotoResponse[]>([]);
     readonly photos = this.photosSignal.asReadonly();
+
+    setCurrentMapPhotosSignal(photos: PhotoResponse[]) {
+        this.currentMapPhotos.set(photos);
+    }
 
     loadAll() {
         this.http.get<PhotoResponse[]>(`${this.apiUrl}/all`).subscribe({

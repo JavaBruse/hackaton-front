@@ -30,7 +30,8 @@
 
 .layer-controls {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 15px;
+    left: 55px;
     z-index: 1000;
+    user-select: none;
 }

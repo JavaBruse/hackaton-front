@@ -38,35 +38,47 @@ svg {
     align-items: center;
     z-index: 1000;
     /* cursor: pointer; */
-    padding: 20px;
+    /* padding: 20px; */
     box-sizing: border-box;
+    /* padding-top: 50px; */
 }
 
 .overide-form {
-    max-width: 1200px;
-    max-height: 90vh;
+    /* max-width: 1200px; */
+    /* max-height: 120vh; */
     width: 100%;
-    overflow-x: hidden;
-    /* убираем горизонтальный скролл */
-    overflow-y: auto;
-    /* оставляем вертикальный */
+    height: 100%;
+    max-width: none;
+    max-height: none;
 }
 
-.overlay>* {
-    /* padding-right: 20px; */
-    pointer-events: auto;
-}
-
-.text {
+.close-btn {
     position: absolute;
-    left: 40px;
-    bottom: 6px;
-    background: rgba(255, 255, 255, 0.336);
-    color: rgb(0, 0, 0);
-    /* padding: 4px 8px; */
-    font-size: 12px;
-    font-size: 10px;
-    /* border-radius: 2px; */
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1001;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: white;
+}
+
+.close-btn mat-icon {
+    color: #333;
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
 }
 
 .description .photo-container {
@@ -78,7 +90,6 @@ svg {
     /* padding-top: 25px; */
     border: 1px solid #00878b;
     border-radius: 10px;
-    padding: 0 7px 0px 7px;
 }
 
 hr {
@@ -110,4 +121,90 @@ hr {
     margin: 0 0 6px 0;
     text-align: center;
     font-size: 14px;
+}
+
+
+::ng-deep .mat-expansion-panel {
+    margin: 2px 0 !important;
+}
+
+::ng-deep .mat-expansion-panel-header {
+    padding: 0 8px !important;
+    height: 30px !important;
+    /* или меньше если нужно */
+}
+
+::ng-deep .mat-expansion-panel-body {
+    padding: 0 8px 8px !important;
+}
+
+::ng-deep .mat-expansion-panel-header-title,
+::ng-deep .mat-expansion-panel-header-description {
+    margin: 0 !important;
+}
+
+::ng-deep .mat-expansion-indicator {
+    padding: 4px !important;
+}
+
+
+@media (max-width: 830px) {
+    .description .photo-container {
+        display: block;
+    }
+
+    .overlay {
+        z-index: 1000;
+        padding-top: 35px;
+    }
+
+    .map-container {
+        height: 100vh !important;
+    }
+
+    .close-btn {
+        top: 55px;
+        right: 20px;
+
+    }
+
+    .photo-image {
+        width: 800px;
+    }
+
+    .parameters-section {
+        margin-left: 0px;
+        margin-top: 5px;
+    }
+
+    .card-layout {
+        display: flex;
+        flex-direction: column;
+        /* меняем row на column */
+        align-items: stretch;
+        height: 100%;
+    }
+
+    .card-main {
+        flex: 1;
+        min-width: 0;
+        order: 2;
+        /* основной контент в середине */
+    }
+
+    .card-side {
+        display: flex;
+        flex-direction: row;
+        /* кнопки теперь в строку */
+        justify-content: space-between;
+        /* равномерно распределить */
+        gap: 10px;
+        padding: 5px;
+        order: 1;
+        /* верхний сайд */
+    }
+
+    .card-side:last-child {
+        order: 3;
+    }
 }

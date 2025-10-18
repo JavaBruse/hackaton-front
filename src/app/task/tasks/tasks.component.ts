@@ -24,6 +24,7 @@ import { StyleSwitcherService } from '../../services/style-switcher.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { PhotoResponse } from '../../photo/service/photo-response';
+import { PhotoService } from '../../photo/service/photo.service';
 
 @Component({
   selector: 'app-tasks',
@@ -56,6 +57,7 @@ export class TasksComponent {
   editTaskId: string | null = null;
   entityes = signal<TaskResponse[]>([]);
   readonly dialog = inject(MatDialog);
+  photoService = inject(PhotoService);
 
   /////////////////////////"TASK_NEW" | "IN_PROGRESS" | "COMPLETED"
 
@@ -217,9 +219,10 @@ export class TasksComponent {
   }
 
   openMap(photos: PhotoResponse[]) {
-    if (!photos) return;
-    console.log(photos);
-    this.router.navigate(['/photo-map'], { state: { photos } });
-  }
 
+    if (!photos) return;
+    // console.log(photos);
+    this.photoService.currentMapPhotos.set(photos);
+    this.router.navigate(['/photo-map']);
+  }
 }

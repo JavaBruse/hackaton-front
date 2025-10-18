@@ -31,6 +31,12 @@
 
   --star-color: rgb(78, 167, 162); 
   --greeen: #00f700;
+
+  --success-popup-color: #186318;
+  --warning-popup-color: #a08416;
+  --error-popup-color:   #803535;
+  --info-popup-color:    #223d8a;
+
   color-scheme: dark;           /* системная поддержка dark mode */
 }
 
@@ -60,6 +66,10 @@
   --star-color: rgba(0, 70, 71);  
   --greeen: #004e00;
 
+  --success-popup-color: #84d65a;
+  --warning-popup-color: #facc15;
+  --error-popup-color:   #f87171;
+  --info-popup-color:    #1d4ed8;
 
   color-scheme: light;           /* системная поддержка light mode */
 }

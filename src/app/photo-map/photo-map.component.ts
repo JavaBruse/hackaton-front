@@ -1,37 +1,35 @@
-import { Component, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, AfterViewInit, OnChanges, SimpleChanges, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet';
 import { PhotoResponse } from '../photo/service/photo-response';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { PhotoService } from '../photo/service/photo.service';
+
 
 export interface MapConfig {
   showControls?: boolean;
 }
-
 @Component({
   selector: 'app-photo-map',
   imports: [CommonModule, FormsModule, MatSelectModule, MatFormFieldModule],
   templateUrl: './photo-map.component.html',
   styleUrl: './photo-map.component.css'
 })
-export class PhotoMapComponent implements AfterViewInit, OnChanges {
+export class PhotoMapComponent implements AfterViewInit {
   private map: L.Map | null = null;
   private markersLayer = L.layerGroup();
   private baseLayers: { [key: string]: L.TileLayer } = {};
+  private photoService = inject(PhotoService);
 
-  photos: PhotoResponse[] = [];
+  photos = this.photoService.currentMapPhotos();
   selectedLayer: string = 'scheme';
   availableLayers = [
     { value: 'scheme', label: 'Схема' },
     { value: 'satellite', label: 'Спутник' },
     { value: 'hybrid', label: 'Гибрид' }
   ];
-
-  ngOnInit() {
-    this.photos = history.state.photos || [];
-  }
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -55,10 +53,8 @@ export class PhotoMapComponent implements AfterViewInit, OnChanges {
     this.map = L.map('map', {
       zoomControl: false,
       preferCanvas: true
-      // Убери crs: L.CRS.EPSG3395
     });
 
-    // Создаем слои OpenStreetMap
     this.baseLayers['scheme'] = L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       { maxZoom: 19, attribution: '© OpenStreetMap contributors' }
@@ -74,7 +70,6 @@ export class PhotoMapComponent implements AfterViewInit, OnChanges {
       { maxZoom: 19, attribution: '© Esri' }
     );
 
-    // Добавляем схему по умолчанию
     this.baseLayers[this.selectedLayer].addTo(this.map);
 
     L.control.zoom({
@@ -87,23 +82,18 @@ export class PhotoMapComponent implements AfterViewInit, OnChanges {
   onLayerChange() {
     if (!this.map) return;
 
-    // Удаляем все тайловые слои
     this.map.eachLayer(layer => {
       if (layer instanceof L.TileLayer) {
         this.map?.removeLayer(layer);
       }
     });
 
-    // Добавляем выбранный слой
     if (this.selectedLayer === 'hybrid') {
-      // Спутник Esri
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 19,
         attribution: '© Esri'
       }).addTo(this.map);
 
-      // ТОЛЬКО подписи (без фона)
-      // Белые подписи
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
         maxZoom: 25,
         attribution: '© CartoDB',

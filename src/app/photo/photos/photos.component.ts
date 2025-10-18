@@ -24,9 +24,12 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { MapComponent } from "../../map/map.component";
+// import { MapComponent } from "../../map/map.component";
 import { TaskService } from '../../task/service/task.service';
 import { MatTabsModule } from '@angular/material/tabs';
+import { StyleSwitcherService } from '../../services/style-switcher.service';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { PhotoMapComponent } from "../../photo-map/photo-map.component";
 
 @Component({
   selector: 'app-photos',
@@ -46,8 +49,10 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatCheckboxModule,
     DatePipe,
     MatFormFieldModule, MatDatepickerModule,
-    MapComponent,
-    MatTabsModule
+    // MapComponent,
+    MatTabsModule,
+    MatExpansionModule,
+    PhotoMapComponent
   ],
   templateUrl: './photos.component.html',
   styleUrl: './photos.component.css',
@@ -57,24 +62,30 @@ import { MatTabsModule } from '@angular/material/tabs';
 export class PhotosComponent {
   taskService = inject(TaskService);
   phtotService = inject(PhotoService);
+  styleSwitcherService = inject(StyleSwitcherService);
+  readonly panelOpenState = signal(false);
   errorMessegeService = inject(ErrorMessageService);
   idTask!: string;
   readonly dialog = inject(MatDialog);
   entityes = signal<PhotoResponse[]>([]);
   private readonly photoSignal = signal<PhotoResponse | null>(null);
-  readonly photo = this.photoSignal.asReadonly();
   isViewMap = signal(false);
+  selectedPhoto = signal<PhotoResponse[]>([]);
+
   @ViewChild('overlay') overlay!: ElementRef;
 
   closeOverlay(event: MouseEvent) {
-    // Проверяем, что клик был именно по overlay (а не по его дочерним элементам)
     if (event.target === this.overlay.nativeElement) {
       this.isViewMap.set(false);
     }
   }
 
+  closeMapButton() {
+    this.isViewMap.set(false);
+  }
+
   openMapOverlay(photo: PhotoResponse) {
-    this.photoSignal.set(photo);
+    this.phtotService.currentMapPhotos.set([photo])
     this.isViewMap.set(true);
   }
 

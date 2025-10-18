@@ -65,53 +65,63 @@
                                             class="photo-image" loading="lazy"> </mat-tab>
                                 </mat-tab-group>
                                 }
-                                <div class="text">
-                                    <div>Ш: {{photo.camMetadataResponse?.latitude}}</div>
-                                    <div>Д: {{photo.camMetadataResponse?.longitude}}</div>
-                                </div>
                             </div>
 
                             <!-- Параметры справа -->
                             <div class="parameters-section">
+                                <mat-accordion>
+                                    <!-- Основные параметры -->
+                                    <mat-expansion-panel [expanded]="true">
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>Основные параметры</mat-panel-title>
+                                        </mat-expansion-panel-header>
 
-                                <h3>Основные параметры</h3>
-                                <!-- <p><strong>Всего фото: </strong>{{phtotService.photos().length}} </p> -->
-                                <!-- <p><strong>ID:</strong> {{photo.id}}</p> -->
-                                <p><strong>Название:</strong> {{photo.name}}</p>
-                                <!-- <p><strong>Хэш файла:</strong> {{photo.fileHash}}</p> -->
-                                <p><strong>Тип контента:</strong> {{photo.contentType}}</p>
-                                <p><strong>Обновлено:</strong> {{photo.updatedAt | date:'dd.MM.yyyy HH:mm'}}</p>
-                                <hr>
-                                @if(photo.camMetadataResponse){
-                                <div class="metadata-section">
-                                    <h3>Метаданные камеры</h3>
-                                    <!-- <p><strong>ID камеры:</strong> {{photo.camMetadataResponse.id}}</p> -->
-                                    <p><strong>Адрес:</strong> {{photo.camMetadataResponse.address}}</p>
-                                    <p><strong>Широта:</strong> {{photo.camMetadataResponse.latitude}}</p>
-                                    <p><strong>Долгота:</strong> {{photo.camMetadataResponse.longitude}}</p>
-                                    <p><strong>Азимут:</strong> {{photo.camMetadataResponse.bearing}}</p>
-                                    <p><strong>Высота:</strong> {{photo.camMetadataResponse.elevation}}</p>
-                                </div>
-                                } @else {
-                                <h3>Метаданные камеры не обнаружены</h3>
+                                        <p><strong>Название:</strong> {{photo.name}}</p>
+                                        <p><strong>Тип контента:</strong> {{photo.contentType}}</p>
+                                        <p><strong>Обновлено:</strong> {{photo.updatedAt | date:'dd.MM.yyyy HH:mm'}}</p>
+                                    </mat-expansion-panel>
 
-                                }
-                                @if(photo.constructMetadataResponses.length>0){
-                                <div class="metadata-section">
-                                    <hr>
-                                    <h3>Bbox карте</h3>
-                                    <mat-tab-group>
-                                        @for (construct of photo.constructMetadataResponses; track construct.id) {
-                                        <mat-tab label={{construct.position}}>
-                                            <!-- <p><strong>Тип:</strong> {{construct.type}}</p> -->
-                                            <p><strong>Адрес:</strong> {{construct.address}}</p>
-                                            <p><strong>Широта:</strong> {{construct.latitude}}</p>
-                                            <p><strong>Долгота:</strong> {{construct.longitude}}</p>
-                                        </mat-tab>
-                                        }
-                                    </mat-tab-group>
-                                </div>
-                                }
+                                    <!-- Метаданные камеры -->
+                                    @if(photo.camMetadataResponse) {
+                                    <mat-expansion-panel>
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>Метаданные камеры</mat-panel-title>
+                                        </mat-expansion-panel-header>
+
+                                        <p><strong>Адрес:</strong> {{photo.camMetadataResponse.address}}</p>
+                                        <p><strong>Широта:</strong> {{photo.camMetadataResponse.latitude}}</p>
+                                        <p><strong>Долгота:</strong> {{photo.camMetadataResponse.longitude}}</p>
+                                        <p><strong>Азимут:</strong> {{photo.camMetadataResponse.bearing}}</p>
+                                        <p><strong>Высота:</strong> {{photo.camMetadataResponse.elevation}}</p>
+                                    </mat-expansion-panel>
+                                    } @else {
+                                    <mat-expansion-panel>
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>Метаданные камеры</mat-panel-title>
+                                        </mat-expansion-panel-header>
+                                        <p>Метаданные камеры не обнаружены</p>
+                                    </mat-expansion-panel>
+                                    }
+
+                                    <!-- Bbox карте -->
+                                    @if(photo.constructMetadataResponses.length > 0) {
+                                    <mat-expansion-panel>
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>Bbox карте</mat-panel-title>
+                                        </mat-expansion-panel-header>
+
+                                        <mat-tab-group>
+                                            @for (construct of photo.constructMetadataResponses; track construct.id) {
+                                            <mat-tab label={{construct.position}}>
+                                                <p><strong>Адрес:</strong> {{construct.address}}</p>
+                                                <p><strong>Широта:</strong> {{construct.latitude}}</p>
+                                                <p><strong>Долгота:</strong> {{construct.longitude}}</p>
+                                            </mat-tab>
+                                            }
+                                        </mat-tab-group>
+                                    </mat-expansion-panel>
+                                    }
+                                </mat-accordion>
                             </div>
 
                         </div>
@@ -123,15 +133,17 @@
                     <button matButton="elevated" (click)="openMapOverlay(photo)"
                         [disabled]="photo.status!='COMPLETED'">Показать карту</button>
                 </div>
+
             </div>
-
-
         </mat-card>
         }
     </div>
 </div>
 @if (isViewMap()) {
 <div class="overlay" #overlay (click)="closeOverlay($event)">
-    <app-map-2gis class="overide-form"></app-map-2gis>
+    <div class="close-btn" (click)="closeMapButton()">
+        <mat-icon>close</mat-icon>
+    </div>
+    <app-photo-map style="width: 100%; height: 100%;"></app-photo-map>
 </div>
 }

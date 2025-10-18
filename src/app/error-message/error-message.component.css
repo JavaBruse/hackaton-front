@@ -60,10 +60,6 @@
     fill: #84d65a;
 }
 
-.success-message-text {
-    color: #2b641e;
-}
-
 /* WARNING STYLES */
 .warning-popup {
     background-color: #fefce8;
@@ -74,9 +70,6 @@
     fill: #facc15;
 }
 
-.warning-message-text {
-    color: #ca8a04;
-}
 
 /* ERROR STYLES */
 .error-popup {
@@ -86,10 +79,6 @@
 
 .error-icon path {
     fill: #f87171;
-}
-
-.error-message-text {
-    color: #991b1b;
 }
 
 /* INFO STYLES */
@@ -102,9 +91,6 @@
     fill: #1d4ed8;
 }
 
-.info-message-text {
-    color: #1d4ed8;
-}
 
 /* Общий класс для текста */
 .message-text {
@@ -175,4 +161,8 @@
             transform: translateY(100%);
         }
     }
+}
+
+.message-text {
+    color: black !important;
 }
