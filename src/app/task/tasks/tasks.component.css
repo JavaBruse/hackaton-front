@@ -7,6 +7,7 @@
     overflow-wrap: break-word;
     word-break: break-word;
     hyphens: auto;
+    user-select: none;
 }
 
 .icon-link {
@@ -21,6 +22,51 @@ svg {
 
 .icon-menu.spin {
     animation: spin 1s linear infinite;
+}
+
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.photo-grid-item {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+::ng-deep .mat-expansion-panel {
+    margin: 2px 0 !important;
+}
+
+::ng-deep .mat-expansion-panel-header {
+    padding: 0 8px !important;
+    height: 30px !important;
+    /* или меньше если нужно */
+}
+
+::ng-deep .mat-expansion-panel-body {
+    padding: 0 8px 8px !important;
+}
+
+::ng-deep .mat-expansion-panel-header-title,
+::ng-deep .mat-expansion-panel-header-description {
+    margin: 0 !important;
+}
+
+::ng-deep .mat-expansion-indicator {
+    padding: 4px !important;
+}
+
+.date-view {
+    gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 @keyframes spin {

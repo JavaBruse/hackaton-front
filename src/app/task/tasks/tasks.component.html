@@ -43,14 +43,49 @@
                 <div class="card-main">
                     <mat-card-header>
                         <mat-card-title>{{ task.name }}</mat-card-title>
-
                     </mat-card-header>
                     <mat-card-content class="description">
-                        <div>
-                            <div>Дата создания:: {{ task.createdAt | date:'dd.MM.yy HH:mm' }}</div>
-                            <div>Дата обновления: {{ task.updatedAt | date:'dd.MM.yy HH:mm' }}</div>
-                            <div>Фото в задаче: {{task.photoCount}}</div>
-                        </div>
+                        <mat-expansion-panel [expanded]="true">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>Дополнительная информация</mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="date-view">
+                                <mat-form-field>
+                                    <mat-label>Дата создания</mat-label>
+                                    <input matInput [value]="task.createdAt | date:'dd.MM.yy HH:mm'" readonly>
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Дата обновления</mat-label>
+                                    <input matInput [value]="task.updatedAt | date:'dd.MM.yy HH:mm'" readonly>
+                                </mat-form-field>
+                            </div>
+                        </mat-expansion-panel>
+                        <mat-expansion-panel matBadge={{task.photos.length}}>
+                            <mat-expansion-panel-header>
+                                <mat-panel-title>Фотографии задачи</mat-panel-title>
+                            </mat-expansion-panel-header>
+                            @if(task.status==="COMPLETED"){
+                            <div class="photos-grid">
+                                @for (photo of task.photos; track photo.id) {
+                                @if(photo.filePathComplete){
+                                <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-grid-item"
+                                    loading="lazy">
+                                } @else {
+                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-grid-item"
+                                    loading="lazy">
+                                }
+                                }
+                            </div>
+                            } @else {
+                            <div class="photos-grid">
+                                @for (photo of task.photos; track photo.id) {
+                                <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-grid-item"
+                                    loading="lazy">
+                                }
+                            </div>
+                            }
+
+                        </mat-expansion-panel>
                     </mat-card-content>
                 </div>
 

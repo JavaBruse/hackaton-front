@@ -25,6 +25,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { PhotoResponse } from '../../photo/service/photo-response';
 import { PhotoService } from '../../photo/service/photo.service';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-tasks',
@@ -44,7 +45,8 @@ import { PhotoService } from '../../photo/service/photo.service';
     MatCheckboxModule,
     TaskAddComponent,
     TaskEditComponent,
-    DatePipe
+    DatePipe,
+    MatExpansionModule
   ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
