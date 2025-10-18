@@ -147,6 +147,10 @@ hr {
     padding: 4px !important;
 }
 
+::ng-deep .custom-paginator {
+    background: transparent !important;
+}
+
 
 @media (max-width: 830px) {
     .description .photo-container {

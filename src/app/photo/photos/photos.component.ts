@@ -24,12 +24,37 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-// import { MapComponent } from "../../map/map.component";
 import { TaskService } from '../../task/service/task.service';
 import { MatTabsModule } from '@angular/material/tabs';
 import { StyleSwitcherService } from '../../services/style-switcher.service';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { PhotoMapComponent } from "../../photo-map/photo-map.component";
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+
+
+
+import { MatPaginatorIntl } from '@angular/material/paginator';
+
+// Добавь этот класс ПЕРЕД твоим компонентом
+export class RussianPaginatorIntl extends MatPaginatorIntl {
+  override itemsPerPageLabel = 'Элементов на странице:';
+  override nextPageLabel = 'Следующая страница';
+  override previousPageLabel = 'Предыдущая страница';
+  override firstPageLabel = 'Первая страница';
+  override lastPageLabel = 'Последняя страница';
+
+  override getRangeLabel = (page: number, pageSize: number, length: number) => {
+    if (length === 0 || pageSize === 0) {
+      return `0 из ${length}`;
+    }
+    length = Math.max(length, 0);
+    const startIndex = page * pageSize;
+    const endIndex = startIndex < length ?
+      Math.min(startIndex + pageSize, length) :
+      startIndex + pageSize;
+    return `${startIndex + 1} - ${endIndex} из ${length}`;
+  };
+}
 
 @Component({
   selector: 'app-photos',
@@ -49,7 +74,7 @@ import { PhotoMapComponent } from "../../photo-map/photo-map.component";
     MatCheckboxModule,
     DatePipe,
     MatFormFieldModule, MatDatepickerModule,
-    // MapComponent,
+    MatPaginatorModule,
     MatTabsModule,
     MatExpansionModule,
     PhotoMapComponent
@@ -57,7 +82,7 @@ import { PhotoMapComponent } from "../../photo-map/photo-map.component";
   templateUrl: './photos.component.html',
   styleUrl: './photos.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [provideNativeDateAdapter(), { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }],
+  providers: [provideNativeDateAdapter(), { provide: MAT_DATE_LOCALE, useValue: 'ru-RU' }, { provide: MatPaginatorIntl, useClass: RussianPaginatorIntl }],
 })
 export class PhotosComponent {
   taskService = inject(TaskService);
@@ -71,8 +96,22 @@ export class PhotosComponent {
   private readonly photoSignal = signal<PhotoResponse | null>(null);
   isViewMap = signal(false);
   selectedPhoto = signal<PhotoResponse[]>([]);
-
   @ViewChild('overlay') overlay!: ElementRef;
+
+
+  currentPage = signal(0);
+  pageSize = signal(5);
+
+  paginatedPhotos = computed(() => {
+    const startIndex = this.currentPage() * this.pageSize();
+    const endIndex = startIndex + this.pageSize();
+    return this.filteredValues().slice(startIndex, endIndex);
+  });
+
+  onPageChange(event: PageEvent) {
+    this.currentPage.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+  }
 
   closeOverlay(event: MouseEvent) {
     if (event.target === this.overlay.nativeElement) {

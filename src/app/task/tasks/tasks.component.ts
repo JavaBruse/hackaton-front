@@ -26,6 +26,7 @@ import { Router } from '@angular/router';
 import { PhotoResponse } from '../../photo/service/photo-response';
 import { PhotoService } from '../../photo/service/photo.service';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-tasks',
@@ -46,7 +47,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     TaskAddComponent,
     TaskEditComponent,
     DatePipe,
-    MatExpansionModule
+    MatExpansionModule,
+    MatPaginatorModule
   ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
@@ -61,7 +63,39 @@ export class TasksComponent {
   readonly dialog = inject(MatDialog);
   photoService = inject(PhotoService);
 
-  /////////////////////////"TASK_NEW" | "IN_PROGRESS" | "COMPLETED"
+
+  taskPaginationStates = new Map<string, { currentPage: number, pageSize: number }>();
+
+  getPaginatedTaskPhotos(task: TaskResponse) {
+    const taskId = task.id!;
+
+    if (!this.taskPaginationStates.has(taskId)) {
+      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 3 });
+    }
+
+    const state = this.taskPaginationStates.get(taskId)!;
+    const startIndex = state.currentPage * state.pageSize;
+    const endIndex = startIndex + state.pageSize;
+
+    return task.photos.slice(startIndex, endIndex);
+  }
+
+  onPhotoPageChange(event: PageEvent, task: TaskResponse) {
+    const taskId = task.id!;
+    this.taskPaginationStates.set(taskId, {
+      currentPage: event.pageIndex,
+      pageSize: event.pageSize
+    });
+  }
+
+  getPaginationState(task: TaskResponse) {
+    const taskId = task.id!;
+    if (!this.taskPaginationStates.has(taskId)) {
+      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 3 });
+    }
+    return this.taskPaginationStates.get(taskId)!;
+  }
+
 
   selectedControl = new FormControl<'all' | 'TASK_NEW' | 'IN_PROGRESS' | 'COMPLETED'>('all');
   searchControl = new FormControl('');

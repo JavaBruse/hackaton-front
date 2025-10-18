@@ -64,9 +64,18 @@
                             <mat-expansion-panel-header>
                                 <mat-panel-title>Фотографии задачи</mat-panel-title>
                             </mat-expansion-panel-header>
+
+                            <!-- Пагинатор для конкретной задачи -->
+                            <mat-paginator class="custom-paginator" [length]="task.photos.length"
+                                [pageSize]="getPaginationState(task).pageSize"
+                                [pageIndex]="getPaginationState(task).currentPage" [pageSizeOptions]="[3, 7, 10]"
+                                (page)="onPhotoPageChange($event, task)">
+                            </mat-paginator>
+
+                            <!-- Контент с фото -->
                             @if(task.status==="COMPLETED"){
                             <div class="photos-grid">
-                                @for (photo of task.photos; track photo.id) {
+                                @for (photo of getPaginatedTaskPhotos(task); track photo.id) {
                                 @if(photo.filePathComplete){
                                 <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-grid-item"
                                     loading="lazy">
@@ -78,13 +87,12 @@
                             </div>
                             } @else {
                             <div class="photos-grid">
-                                @for (photo of task.photos; track photo.id) {
+                                @for (photo of getPaginatedTaskPhotos(task); track photo.id) {
                                 <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-grid-item"
                                     loading="lazy">
                                 }
                             </div>
                             }
-
                         </mat-expansion-panel>
                     </mat-card-content>
                 </div>
