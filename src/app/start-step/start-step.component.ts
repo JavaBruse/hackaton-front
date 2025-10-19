@@ -99,6 +99,7 @@ export class StartStepComponent {
                 }
               } else if (newTask.status === 'COMPLETED') {
                 this.trackedTasks.delete(newTask.id!);
+                this.taskService.loadAll();
               }
             }
           });
