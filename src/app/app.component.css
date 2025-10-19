@@ -6,7 +6,7 @@
     padding: .5rem 1rem;
     background: var(--card);
     box-shadow: var(--shadow);
-    z-index: 1002;
+    z-index: 998;
     position: sticky;
     top: 0;
 }
@@ -113,11 +113,11 @@
         grid-template-columns: 43px 1fr;
     }
 
-    .backdrop.show {
+    .backdrop-menu.show {
         position: fixed;
         inset: 0;
         height: 100%;
-        z-index: 1001;
+        z-index: 997;
         background: rgba(0, 0, 0, 0.5);
         /* Затемнение */
         backdrop-filter: blur(10px);
