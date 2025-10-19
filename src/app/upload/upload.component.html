@@ -14,64 +14,62 @@
     }
     <!-- список файлов -->
     @if (files.length > 0) {
-    <ul>
-        <div class="cards-grid">
-            @for (f of files; track f.file.name; let i = $index) {
-            <mat-card tabindex="0" class="card-style">
-                <div class="card-layout">
-                    <div class="card-side">
-                        <div class="size">{{ formatSize(f.file.size) }}</div>
-                    </div>
-                    <div class="card-main">
-                        <div class="input-stile">
-                            <mat-form-field>
-                                <mat-label>Широта</mat-label>
-                                <input matInput type="number" placeholder="55.7558" [value]="f.latitude"
-                                    [readonly]="!!f.latitude">
-                            </mat-form-field>
-                            <mat-form-field>
-                                <mat-label>Долгота</mat-label>
-                                <input matInput type="number" placeholder="37.6173" [value]="f.longitude"
-                                    [readonly]="!!f.longitude">
-                            </mat-form-field>
-                        </div>
-                        <mat-card-content class="description">
-                            @if (f.isImage) {
-                            <div class="file-row">
-                                <img [src]="f.preview" alt="preview" class="thumb" />
-                                <span class="file-info">
-                                    <strong>{{ f.file.name }}</strong>
-                                </span>
-                            </div>
-                            }
-
-
-                            <!-- прогресс под файлом -->
-                            <div class="progress-row">
-                                <div class="progress-bar">
-                                    <div class="progress" [style.width.%]="f.progress"></div>
+    <div class="cards-grid">
+        @for (f of files; track f.file.name; let i = $index) {
+        <mat-card tabindex="0" class="card-style">
+            <div class="card-layout">
+                <div class="card-main">
+                    <mat-card-content class="description">
+                        <div class="photo-container">
+                            <!-- Фото слева -->
+                            <div class="photo-section">
+                                @if (f.isImage) {
+                                <div class="file-row">
+                                    <img [src]="f.preview" alt="preview" class="photo-image" (click)="showPreview(f)" />
+                                    <span class="file-info">
+                                        <strong>{{ f.file.name }}</strong>
+                                    </span>
                                 </div>
-                                <div class="percent">{{ f.progress }}%</div>
+                                }
                             </div>
 
-                            <!-- ошибка если есть -->
-                            @if (f.error) {
-                            <div class="upload-error">Ошибка: {{ f.error }}</div>
-                            }
-                        </mat-card-content>
+                            <!-- Параметры справа -->
+                            <div class="parameters-section">
+                                <mat-form-field>
+                                    <mat-label>Широта</mat-label>
+                                    <input matInput type="number" placeholder="55.7558" [value]="f.latitude"
+                                        [readonly]="!!f.latitude">
+                                </mat-form-field>
+                                <mat-form-field>
+                                    <mat-label>Долгота</mat-label>
+                                    <input matInput type="number" placeholder="37.6173" [value]="f.longitude"
+                                        [readonly]="!!f.longitude">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </mat-card-content>
 
+                    <!-- Ошибка если есть -->
+                    @if (f.error) {
+                    <div class="upload-error">Ошибка: {{ f.error }}</div>
+                    }
 
+                    <!-- Прогресс -->
+                    <div class="progress-row">
+                        <div class="progress-bar">
+                            <div class="progress" [style.width.%]="f.progress"></div>
+                        </div>
+                        <div class="percent">{{ f.progress }}%</div>
                     </div>
-                    <div class="card-side">
-                        <button matButton="elevated" (click)="showPreview(f)">Просмотр</button>
-                        <button matButton="elevated" (click)="removeFile(i)">Удалить</button>
-                    </div>
-
                 </div>
-            </mat-card>
-            }
-        </div>
-    </ul>
+                <div class="card-side">
+                    <div class="size">{{ formatSize(f.file.size) }}</div>
+                    <button matButton="elevated" (click)="removeFile(i)">Удалить</button>
+                </div>
+            </div>
+        </mat-card>
+        }
+    </div>
     }
 
     <!-- overlay предпросмотр -->
@@ -89,4 +87,6 @@
         </div>
     </div>
     }
+
+    <div class="backdrop" [class.show]="previewImage" (click)="closePreview()"></div>
 </section>

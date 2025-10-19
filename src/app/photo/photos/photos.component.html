@@ -51,20 +51,24 @@
                                 @if (photo.filePathComplete) {
                                 <mat-tab-group>
                                     <mat-tab label="Оригинал"><img [src]="photo.filePathOriginal" [alt]="photo.name"
-                                            class="photo-image" loading="lazy"> </mat-tab>
+                                            class="photo-image" loading="lazy"
+                                            (click)="showPreview(photo.filePathOriginal)"> </mat-tab>
                                     <mat-tab label="Обработанное"> <img [src]="photo.filePathComplete"
-                                            [alt]="photo.name" class="photo-image" loading="lazy"> </mat-tab>
+                                            [alt]="photo.name" class="photo-image" loading="lazy"
+                                            (click)="showPreview(photo.filePathComplete)"> </mat-tab>
                                 </mat-tab-group>
                                 }@else{
                                 <mat-tab-group>
                                     <mat-tab label="Оригинал"><img [src]="photo.filePathOriginal" [alt]="photo.name"
-                                            class="photo-image" loading="lazy"> </mat-tab>
+                                            class="photo-image" loading="lazy"
+                                            (click)="showPreview(photo.filePathOriginal)"> </mat-tab>
                                 </mat-tab-group>
                                 }
                                 } @else{
                                 <mat-tab-group>
                                     <mat-tab label="Оригинал"><img [src]="photo.filePathOriginal" [alt]="photo.name"
-                                            class="photo-image" loading="lazy"> </mat-tab>
+                                            class="photo-image" loading="lazy"
+                                            (click)="showPreview(photo.filePathOriginal)"> </mat-tab>
                                 </mat-tab-group>
                                 }
                             </div>
@@ -151,5 +155,15 @@
         </div>
         <app-photo-map></app-photo-map>
     </div>
+
     }
+
+    <div class="backdrop" [class.show]="isViewMap()"></div>
+
+    @if (previewImage) {
+    <div class="overlay" (click)="closePreview()">
+        <img [src]="previewImage" class="preview-image" />
+    </div>
+    }
+    <div class="backdrop" [class.show]="previewImage" (click)="closePreview()"></div>
 </div>

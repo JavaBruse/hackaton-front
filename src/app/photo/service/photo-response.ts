@@ -1,6 +1,6 @@
 export interface PhotoResponse {
     id: string;
-    filePathOriginal?: string,
+    filePathOriginal: string,
     filePathComplete: string,
     fileHash?: string;
     name: string;

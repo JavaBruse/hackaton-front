@@ -109,6 +109,14 @@ hr {
 }
 
 
+.preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    border: 3px solid white;
+    border-radius: 8px;
+}
+
+
 @media (max-width: 830px) {
     /* .description {
         display: block;

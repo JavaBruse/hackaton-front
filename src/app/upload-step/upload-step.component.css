@@ -1,93 +1,68 @@
 .cards-grid {
     grid-template-columns: 1fr;
-    height: 100%;
-    overflow-y: auto;
 }
 
-.drop-zone {
-    padding: 20px;
-    margin-bottom: 10px;
-    text-align: center;
-    border: 2px dashed gray;
-}
-
-.drop-zone.drag-over {
-    border-color: rgb(187, 255, 0);
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-.file-item {
-    margin-bottom: 10px;
-}
-
-.file-row {
+.description .photo-container {
     display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
-.thumb {
-    width: 60px;
-    object-fit: cover;
-    border: 1px solid #ddd;
-}
-
-.file-info {
+.photo-section {
     flex: 1;
 }
 
-.size {
-    font-size: 0.9em;
-    color: #555;
-}
-
-.preview-image {
+.photo-image {
     max-width: 100%;
-    max-height: 90%;
-    border: 3px solid white;
-    border-radius: 8px;
+    width: 500px;
+    height: auto;
+    display: block;
+    border-radius: 10px;
 }
 
-.overlay {
-    z-index: 1002;
-}
-
-.drop-zone {
-    border: 2px dashed #888;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.drop-zone.drag-over {
-    border-color: #1976d2;
-    background: #f0f8ff;
-}
-
-.file-item {
-    margin: 10px 0;
+.parameters-section {
+    margin-left: 10px;
+    /* border: 1px solid #00878b; */
+    /* border-radius: 10px; */
+    width: 50%;
+    /* padding: 10px; */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .file-row {
+    position: relative;
+}
+
+.file-row .file-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    font-size: 10px;
+    border-radius: 10px;
+
+    text-align: center;
+}
+
+.card-layout {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    flex-direction: row;
+    align-items: stretch;
 }
 
-.thumb {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border-radius: 4px;
+.card-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 8px;
 }
 
-.size {
-    font-size: 12px;
-    color: #555;
+.card-main {
+    flex: 1;
+    min-width: 0;
 }
 
 .progress-row {
@@ -119,62 +94,51 @@ ul {
     font-weight: 600;
 }
 
-
-
-mat-form-field {
-    padding-right: 10px;
-}
-
-.input-stile {
-    padding-right: 5px;
-}
-
-strong {
-    word-wrap: break-word;
-    word-break: break-all;
-}
-
-.card-main {
-    padding-top: 10px;
+.preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    border: 3px solid white;
+    border-radius: 8px;
 }
 
 
-@media (max-width: 768px) {
-    main {
-        padding-left: 0;
+
+.overlay {
+    z-index: 1002;
+}
+
+@media (max-width: 830px) {
+    .description .photo-container {
+        flex-direction: column;
     }
 
-    .search-field {
+    .photo-image {
+        max-width: 100%;
+        width: 700px;
+        height: auto;
+        display: block;
+        border-radius: 10px;
+    }
+
+
+    .parameters-section {
         width: 100%;
-        max-width: 768px;
-    }
-
-    ::-webkit-scrollbar {
-        display: none;
+        margin-left: 0;
+        margin-top: 10px;
     }
 
     .card-layout {
-        display: flex;
         flex-direction: column;
-        align-items: stretch;
-        height: 100%;
-    }
-
-    .card-main {
-        flex: 1;
-        min-width: 0;
-        order: 2;
-        padding-left: 10px;
     }
 
     .card-side {
-        display: flex;
         flex-direction: row;
         justify-content: space-between;
-        gap: 10px;
-        padding: 5px;
         order: 1;
-        /* верхний сайд */
+    }
+
+    .card-main {
+        order: 2;
     }
 
     .card-side:last-child {
@@ -182,15 +146,19 @@ strong {
     }
 }
 
-.progress-counter {
-    font-size: 28px;
-    color: white;
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.06);
-    padding: 12px 20px;
-    border-radius: 8px;
+/* Остальные стили без изменений */
+.drop-zone {
+    padding: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+    border: 2px dashed gray;
+}
+
+.drop-zone.drag-over {
+    border-color: rgb(187, 255, 0);
 }
 
 .send-button {
     width: 100%;
+    margin-top: 15px;
 }

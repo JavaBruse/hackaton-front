@@ -81,10 +81,10 @@
                                 @for (photo of getPaginatedTaskPhotos(task); track photo.id) {
                                 @if(photo.filePathComplete){
                                 <img [src]="photo.filePathComplete" [alt]="photo.name" class="photo-grid-item"
-                                    loading="lazy">
+                                    loading="lazy" (click)="showPreview(photo.filePathComplete)">
                                 } @else {
                                 <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-grid-item"
-                                    loading="lazy">
+                                    loading="lazy" (click)="showPreview(photo.filePathOriginal)">
                                 }
                                 }
                             </div>
@@ -92,7 +92,7 @@
                             <div class="photos-grid">
                                 @for (photo of getPaginatedTaskPhotos(task); track photo.id) {
                                 <img [src]="photo.filePathOriginal" [alt]="photo.name" class="photo-grid-item"
-                                    loading="lazy">
+                                    loading="lazy" (click)="showPreview(photo.filePathOriginal)">
                                 }
                             </div>
                             }
@@ -141,4 +141,16 @@
         <app-start-step></app-start-step>
     </div>
     }
+    <div class="backdrop" [class.show]="isViewMap()"></div>
+
+    <div class="backdrop" [class.show]="this.taskService.isVisibleStepSignal()"></div>
+
+
+    @if (previewImage) {
+    <div class="overlay" (click)="closePreview()">
+        <img [src]="previewImage" class="preview-image" />
+    </div>
+    }
+    <div class="backdrop" [class.show]="previewImage" (click)="closePreview()"></div>
+
 </div>

@@ -253,7 +253,19 @@ main {
 .close-btn:hover {
     background: white;
 }
- 
+
+.backdrop.show {
+    position: fixed;
+    inset: 0;
+    height: 100%;
+    z-index: 999;
+    /* background: rgba(104, 104, 104, 0.5); */
+    /* Затемнение */
+    // backdrop-filter: blur(10px);
+    /* Размытие */
+    -webkit-backdrop-filter: blur(10px);
+    /* Для Safari */
+}
  
 @media (max-width: 1250px) {
     .overlay {

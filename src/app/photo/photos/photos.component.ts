@@ -96,8 +96,13 @@ export class PhotosComponent {
   selectedPhoto = signal<PhotoResponse[]>([]);
   render = inject(Renderer2);
   @ViewChild('overlay') overlay!: ElementRef;
+  previewImage: string | null = null;
 
+  showPreview(file: string): void {
+    if (file) this.previewImage = file;
+  }
 
+  closePreview(): void { this.previewImage = null; }
   currentPage = signal(0);
   pageSize = signal(5);
 

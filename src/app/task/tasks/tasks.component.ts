@@ -94,6 +94,7 @@ export class TasksComponent {
   render = inject(Renderer2);
   taskPaginationStates = new Map<string, { currentPage: number, pageSize: number }>();
   isViewMap = signal(false);
+  previewImage: string | null = null;
   getPaginatedTaskPhotos(task: TaskResponse) {
     const taskId = task.id!;
 
@@ -107,6 +108,12 @@ export class TasksComponent {
 
     return task.photos.slice(startIndex, endIndex);
   }
+
+  showPreview(file: string): void {
+    if (file) this.previewImage = file;
+  }
+
+  closePreview(): void { this.previewImage = null; }
 
   onPhotoPageChange(event: PageEvent, task: TaskResponse) {
     const taskId = task.id!;
