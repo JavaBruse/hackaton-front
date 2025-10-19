@@ -88,7 +88,7 @@ export class TasksComponent {
   errorMessegeService = inject(ErrorMessageService);
   styleSwithService = inject(StyleSwitcherService);
   editTaskId: string | null = null;
-  entityes = signal<TaskResponse[]>([]);
+  // entityes = signal<TaskResponse[]>([]);
   readonly dialog = inject(MatDialog);
   photoService = inject(PhotoService);
   render = inject(Renderer2);
@@ -176,6 +176,7 @@ export class TasksComponent {
   delete(id: string | null) {
     if (id) {
       this.taskService.delete(id);
+      this.taskService.uploadStep.set(0);
     } else {
       this.errorMessegeService.showError('id не может быть null');
     }
@@ -303,16 +304,44 @@ export class TasksComponent {
   closeOverlayStep(event: Event) {
     if (event.target === event.currentTarget) {
       this.taskService.setVisibleStep(false);
+      this.taskService.loadAll();
       this.render.removeStyle(document.body, 'overflow');
     }
   }
 
-  closeButtonStep() {
+  async closeButtonStep() {
     this.taskService.setVisibleStep(false);
+    await this.taskService.loadAll();
     this.render.removeStyle(document.body, 'overflow');
   }
 
   openOverlayStep() {
+    this.taskService.photosIsPresent.set(false);
+    const step = this.taskService.uploadStep();
+    if (step !== 0) {
+      const task = this.taskService.tasks().find(t => t.id === this.taskService.taskUploadPhoto()?.id);
+      if (task) {
+        this.taskService.taskUploadPhoto.set(task);
+        if (task.status === 'COMPLETED') {
+          this.taskService.uploadStep.set(0);
+        } else {
+          if (task.photos.length > 0) {
+            this.taskService.uploadStep.set(2);
+            this.taskService.photosIsPresent.set(true);
+          }
+        }
+      }
+    } else {
+      const newTask = this.taskService.tasks().find(t => t.status === 'TASK_NEW');
+      if (newTask) {
+        this.taskService.taskUploadPhoto.set(newTask);
+        this.taskService.uploadStep.set(1);
+        if (newTask.photos.length > 0) {
+          this.taskService.uploadStep.set(2);
+          this.taskService.photosIsPresent.set(true);
+        }
+      }
+    }
     this.taskService.setVisibleStep(true);
     this.render.setStyle(document.body, 'overflow', 'hidden');
   }

@@ -1,29 +1,36 @@
 <div class="step-form">
-    <mat-stepper class="custom-step" #stepper linear>
+    @if (this.taskService.uploadStep()!==0) {
+    <div class="task-name">Задача: {{this.taskService.taskUploadPhoto()?.name}}</div>
+    }
+    <mat-stepper class="custom-step" #stepper linear [selectedIndex]="this.taskService.uploadStep()">
         <mat-step [formGroup]="form" [editable]="false">
             <ng-template matStepLabel>Создать</ng-template>
             <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Название</mat-label>
-                <input matInput="elevated" formControlName="name" maxlength="100" placeholder="Введите название">
+                <input matInput="elevated" formControlName="name" maxlength="100" placeholder="Имя задачи"
+                    (keydown.enter)="saveTask(); stepper.next()">
                 <mat-hint align="end">{{ form.get('name')?.value?.length || 0 }} / 100</mat-hint>
             </mat-form-field>
+            @if (form.get('name')?.value?.trim()) {
             <div>
                 <button matButton="elevated" class="full-width" matStepperNext (click)="saveTask()">Далее</button>
             </div>
+            }
         </mat-step>
-        <mat-step label="Загрузить">
-            <app-upload-step (nextStep)="stepper.next()"></app-upload-step>
+        <mat-step label="Загрузить" class="upload-step">
             <div class="upload-step">
-                <!-- <button matButton="elevated" class="full-width" matStepperPrevious>Назад</button> -->
+                <app-upload-step class="upload-step" (nextStep)="stepper.next()"></app-upload-step>
+                @if(this.taskService.photosIsPresent()) {
                 <button matButton="elevated" class="full-width" matStepperNext>Далее</button>
+                }
             </div>
         </mat-step>
         <mat-step>
             <ng-template matStepLabel>Запустить</ng-template>
             <div>
-                <button matButton="elevated" class="full-width" matStepperPrevious>Назад</button>
-                <button matButton="elevated" class="full-width" matStepperPrevious
-                    (click)="startTask()">Старт!!!</button>
+                <button matButton="elevated" class="full-width" matStepperPrevious>Загрузить еще
+                    фотографий</button>
+                <button matButton="elevated" class="full-width" matStepperPrevious (click)="startTask()">Старт!</button>
             </div>
         </mat-step>
     </mat-stepper>

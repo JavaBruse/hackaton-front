@@ -214,6 +214,7 @@ export class UploadStepComponent {
     for (let w = 0; w < parallel; w++) workers.push(worker());
     await Promise.all(workers);
     this.cdRef.detectChanges();
+    this.taskService.photosIsPresent.set(true);
   }
 
   private async uploadSingle(uploadFile: UploadFile): Promise<void> {
@@ -243,5 +244,6 @@ export class UploadStepComponent {
     }
     this.onSomeButtonClick();
     this.cdRef.detectChanges();
+    this.taskService.photosIsPresent.set(true);
   }
 }

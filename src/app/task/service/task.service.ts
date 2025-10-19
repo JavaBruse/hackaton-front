@@ -14,6 +14,8 @@ export class TaskService {
     dialogTitle: string | null = null;
     dialogDisk: string | null = null;
     readonly taskUploadPhoto = signal<TaskResponse | null>(null);
+    readonly uploadStep = signal<0 | 1 | 2>(0);
+    readonly photosIsPresent = signal(false);
 
 
     private readonly tasksSignal = signal<TaskResponse[]>([]);
@@ -84,6 +86,7 @@ export class TaskService {
             next: (tasks) => this.tasksSignal.set(tasks),
             error: () => { },
         });
+        this.uploadStep.set(0);
     }
 
 

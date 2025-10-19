@@ -47,8 +47,8 @@ export class StartStepComponent {
       };
       try {
         await this.taskService.addAndGetId(task);
-        console.log(this.taskService.taskUploadPhoto()?.id);
-
+        // console.log(this.taskService.taskUploadPhoto()?.id);
+        this.taskService.uploadStep.set(1);
       } catch (error: any) {
         this.errorMessegeService.showError(error.message);
       }

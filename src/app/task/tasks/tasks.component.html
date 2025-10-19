@@ -62,6 +62,7 @@
                                 </mat-form-field>
                             </div>
                         </mat-expansion-panel>
+                        @if(task.photos.length>0){
                         <mat-expansion-panel matBadge={{task.photos.length}}>
                             <mat-expansion-panel-header>
                                 <mat-panel-title>Фотографии задачи</mat-panel-title>
@@ -96,12 +97,15 @@
                             </div>
                             }
                         </mat-expansion-panel>
+                        }
                     </mat-card-content>
                 </div>
                 <div class="card-side">
                     @if(task.status=='TASK_NEW'){
+                    @if(task.photos.length>0){
                     <button matButton="elevated"
                         (click)="openDialogTask('0ms', '0ms', task.id, task.photoCount)">Запустить анализ!</button>
+                    }
                     <button matButton="elevated" routerLink="/upload/{{ task.id }}">Загрузить фотографии</button>
                     }
                     @if(task.status=='COMPLETED'){

@@ -5,6 +5,7 @@
     border: 1px solid #00878b;
     border-radius: 10px;
     overflow-y: auto !important;
+    user-select: none;
 }
 
 
@@ -19,9 +20,11 @@
 }
 
 .upload-step {
-    display: flex;
+    display: fixed;
     gap: 10px;
+    margin-top: 20px;
 }
+
 
 .full-width {
     margin-top: 10px;
@@ -30,4 +33,17 @@
 
 ::ng-deep .custom-step .mat-step-header {
     pointer-events: none;
+}
+
+.step-form .task-name {
+    text-align: center;
+    /* text-transform: uppercase; */
+    font-size: 18px;
+    font-weight: normal;
+    position: absolute;
+    top: 35px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    z-index: 10;
 }
