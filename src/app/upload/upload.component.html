@@ -1,6 +1,8 @@
 <section>
-    <button class="back-button" matButton="elevated" routerLink="">Назад</button>
-    <!-- зона drag&drop -->
+    <button mat-raised-button routerLink="" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Назад
+    </button> <!-- зона drag&drop -->
     <div class=" drop-zone" (dragover)="allowDrop($event)" (dragleave)="onDragLeave()" (drop)="onFileDropped($event)"
         [class.drag-over]="dragOver">
         <p>Перетащите файлы сюда или выберите вручную</p>

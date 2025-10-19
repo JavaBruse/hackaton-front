@@ -99,7 +99,7 @@ export class TasksComponent {
     const taskId = task.id!;
 
     if (!this.taskPaginationStates.has(taskId)) {
-      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 2 });
+      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 6 });
     }
 
     const state = this.taskPaginationStates.get(taskId)!;
@@ -126,7 +126,7 @@ export class TasksComponent {
   getPaginationState(task: TaskResponse) {
     const taskId = task.id!;
     if (!this.taskPaginationStates.has(taskId)) {
-      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 2 });
+      this.taskPaginationStates.set(taskId, { currentPage: 0, pageSize: 6 });
     }
     return this.taskPaginationStates.get(taskId)!;
   }
